@@ -5,11 +5,16 @@ using UnityEngine.AI;
 
 public class Move : MonoBehaviour
 {
-    public Transform goal;
+    NavMeshAgent agent;
 
     void Start()
     {
-        NavMeshAgent agent = GetComponent<NavMeshAgent>();
-        agent.destination = goal.position;
+        agent = GetComponent<NavMeshAgent>();
+        MoveToLocation(new Vector3(0, 0,0));
+    }
+
+    private void MoveToLocation(Vector3 goal)
+    {
+        agent.destination = goal;
     }
 }
