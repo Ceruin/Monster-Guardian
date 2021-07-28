@@ -4,15 +4,30 @@ using UnityEngine;
 
 public class Draggable : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Vector3 mOffset;
+    private float mZCoord;
+
+    private void OnMouseDown()
     {
-        
+        mZCoord = Camera.main.WorldToScreenPoint(gameObject.transform.position).z;
+
+        // store offset = gameobj world pos - mouse world pos
+        mOffset = gameObject.transform.position - GetMouseWorldPos();
     }
 
-    // Update is called once per frame
-    void Update()
+    private Vector3 GetMouseWorldPos()
     {
-        
+        // x, y
+        Vector3 mousePoint = Input.mousePosition;
+
+        // z
+        mousePoint.z = mZCoord;
+
+        return Camera.main.ScreenToWorldPoint(mousePoint);
+    }
+
+    private void OnMouseDrag()
+    {
+        transform.position = GetMouseWorldPos() + mOffset;
     }
 }
