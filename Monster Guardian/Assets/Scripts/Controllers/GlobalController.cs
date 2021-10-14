@@ -32,6 +32,7 @@ public class GlobalController : MonoBehaviour, ISelectionActions
             return hit.point;
         }
     }
+
     public Vector3 worldMousePOS
     {
         get
@@ -41,6 +42,115 @@ public class GlobalController : MonoBehaviour, ISelectionActions
             Physics.Raycast(ray, out hit);
             return hit.point;
         }
+    }
+
+    public void OnContinueSelection(InputAction.CallbackContext context)
+    {
+    }
+
+    public void OnEndSelection(InputAction.CallbackContext context)
+    {
+        //Debug.Log(nameof(OnEndSelection));
+        if (context.performed)
+        {
+            //dragSelect = false;
+
+            //GetSelectedObjects();
+        }
+    }
+
+    public void OnMousePosition(InputAction.CallbackContext context)
+    {
+        //Debug.Log(nameof(OnMousePosition));
+        //mousePosition = context.ReadValue<Vector2>();
+        //Debug.Log($"Screen Mouse POS {screenMousePOS}");
+        //Debug.Log($"World Mouse POS {worldMousePOS}");
+    }
+
+    public void OnMoveSelection(InputAction.CallbackContext context)
+    {
+        //Debug.Log(nameof(OnMoveSelection));
+        if (context.performed)
+        {
+            //if (!dragSelect)
+            //{
+            //    foreach (var item in selected_table.SelectedTable)
+            //    {
+            //        item.Value.GetComponent<PathingController>().MoveToLocation(worldMousePOS);
+            //        //Debug.Log($"Try Move: {worldMousePOS}");
+            //    }
+            //}
+        }
+    }
+
+    public void OnStartSelection(InputAction.CallbackContext context)
+    {
+        // Debug.Log(nameof(OnStartSelection));
+        if (context.performed)
+        {
+            //startScreenMousePOS = new Vector3(screenMousePOS.x, screenMousePOS.y, screenMousePOS.z);
+            //dragSelect = true;
+        }
+    }
+
+    public void OnTestSuper(InputAction.CallbackContext context)
+    {
+        //Debug.Log(nameof(OnTestSuper));
+        if (context.performed)
+        {
+        }
+    }
+
+    private void Awake()
+    {
+        playerControls = new ControlManager();
+        playerControls.Selection.SetCallbacks(this);
+    }
+
+    private void OnDisable()
+    {
+        playerControls.Selection.StartSelection.Disable();
+        playerControls.Selection.ContinueSelection.Disable();
+        playerControls.Selection.EndSelection.Disable();
+        playerControls.Selection.MousePosition.Disable();
+        playerControls.Selection.MoveSelection.Disable();
+        playerControls.Selection.TestSuper.Disable();
+    }
+
+    private void OnEnable()
+    {
+        playerControls.Selection.StartSelection.Enable();
+        playerControls.Selection.ContinueSelection.Enable();
+        playerControls.Selection.EndSelection.Enable();
+        playerControls.Selection.MousePosition.Enable();
+        playerControls.Selection.MoveSelection.Enable();
+        playerControls.Selection.TestSuper.Enable();
+    }
+
+    private void OnGUI()
+    {
+        //if (dragSelect)
+        //{
+        //    drawnRect = GraphicsUtils.GetScreenRect(startScreenMousePOS, screenMousePOS);
+        //    GraphicsUtils.DrawScreenRect(drawnRect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
+        //    GraphicsUtils.DrawScreenRectBorder(drawnRect, 2, new Color(0.8f, 0.8f, 0.95f));
+        //}
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        //selected_table.AddSelection(other.gameObject);
+    }
+
+    // Start is called before the first frame update
+    private void Start()
+    {
+        //selected_table = GetComponent<SelectedAlliesModel>();
+    }
+
+    // Update is called once per frame
+    private void Update()
+    {
     }
 
     [Obsolete("Remove")]
@@ -63,69 +173,23 @@ public class GlobalController : MonoBehaviour, ISelectionActions
         //Vector2[] corners = Utils.GetBoundingBox(mouseSelectStartPOS, projectedMousePOS);
     }
 
-    public void OnContinueSelection(InputAction.CallbackContext context)
+    [Obsolete("Fix")]
+    private void SelectOverlapUnits()
     {
+        Vector3 min = Vector3.zero;
+        Vector3 center = Vector3.zero;
+        Vector3 max = Vector3.zero;
+
+        RaycastHit hit;
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(new Vector3(drawnRect.position.x - drawnRect.width / 2f, drawnRect.position.y - drawnRect.height / 2f) + Camera.main.transform.position), out hit)) min = hit.point;
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(new Vector3(drawnRect.position.x + drawnRect.width / 2f, drawnRect.position.y + drawnRect.height / 2f) + Camera.main.transform.position), out hit)) max = hit.point;
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(new Vector3(drawnRect.position.x, drawnRect.position.y) + Camera.main.transform.position), out hit)) center = hit.point;
+
+        Collider[] units = Physics.OverlapBox(center, (max - min) / 2f, Quaternion.identity);
+        Debug.Log(units.Length);
     }
 
-    public void OnEndSelection(InputAction.CallbackContext context)
-    {
-        Debug.Log(nameof(OnEndSelection));
-
-        if (context.performed)
-        {
-            dragSelect = false;
-
-            GetSelectedObjects();
-        }
-    }
-
-    public void OnMousePosition(InputAction.CallbackContext context)
-    {
-        //Debug.Log(nameof(OnMousePosition));
-        mousePosition = context.ReadValue<Vector2>();
-        //Debug.Log($"Screen Mouse POS {screenMousePOS}");
-        //Debug.Log($"World Mouse POS {worldMousePOS}");
-    }
-
-    public void OnMoveSelection(InputAction.CallbackContext context)
-    {
-        Debug.Log(nameof(OnMoveSelection));
-        if (context.performed)
-        {
-            if (!dragSelect)
-            {
-                foreach (var item in selected_table.SelectedTable)
-                {
-                    item.Value.GetComponent<PathingController>().MoveToLocation(worldMousePOS);
-                    //Debug.Log($"Try Move: {worldMousePOS}");
-                }
-            }
-        }
-    }
-
-    public void OnStartSelection(InputAction.CallbackContext context)
-    {
-        // Debug.Log(nameof(OnStartSelection));
-        if (context.performed)
-        {
-            startScreenMousePOS = new Vector3(screenMousePOS.x, screenMousePOS.y, screenMousePOS.z);
-            dragSelect = true;
-        }
-    }
-
-    public void OnTestSuper(InputAction.CallbackContext context)
-    {
-        //Debug.Log(nameof(OnTestSuper));
-        if (context.performed)
-        {
-        }
-    }
-    private void Awake()
-    {
-        playerControls = new ControlManager();
-        playerControls.Selection.SetCallbacks(this);
-    }
-
+    [Obsolete("Bad Code")]
     //create a bounding box (4 corners in order) from the start and end mouse position
     private Vector2[] GenBoundingBox(Vector2 p1, Vector2 p2)
     {
@@ -173,6 +237,7 @@ public class GlobalController : MonoBehaviour, ISelectionActions
         return corners;
     }
 
+    [Obsolete("Bad Code")]
     //generate a mesh from the 4 bottom points
     private Mesh GenSelectionMesh(Vector3[] corners, Vector3[] vecs)
     {
@@ -196,6 +261,7 @@ public class GlobalController : MonoBehaviour, ISelectionActions
         return selectionMesh;
     }
 
+    [Obsolete("Bad Code")]
     /// <summary>
     /// Get all game objects within a selected rectangle to be commanded
     /// </summary>
@@ -245,66 +311,5 @@ public class GlobalController : MonoBehaviour, ISelectionActions
         }
 
         //Destroy(selectionBox, 0.02f);
-    }
-
-    private void OnDisable()
-    {
-        playerControls.Selection.StartSelection.Disable();
-        playerControls.Selection.ContinueSelection.Disable();
-        playerControls.Selection.EndSelection.Disable();
-        playerControls.Selection.MousePosition.Disable();
-        playerControls.Selection.MoveSelection.Disable();
-        playerControls.Selection.TestSuper.Disable();
-    }
-
-    private void OnEnable()
-    {
-        playerControls.Selection.StartSelection.Enable();
-        playerControls.Selection.ContinueSelection.Enable();
-        playerControls.Selection.EndSelection.Enable();
-        playerControls.Selection.MousePosition.Enable();
-        playerControls.Selection.MoveSelection.Enable();
-        playerControls.Selection.TestSuper.Enable();
-    }
-
-    private void OnGUI()
-    {
-        if (dragSelect)
-        {
-            drawnRect = GraphicsUtils.GetScreenRect(startScreenMousePOS, screenMousePOS);
-            GraphicsUtils.DrawScreenRect(drawnRect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
-            GraphicsUtils.DrawScreenRectBorder(drawnRect, 2, new Color(0.8f, 0.8f, 0.95f));
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        selected_table.AddSelection(other.gameObject);
-    }
-    [Obsolete("Fix")]
-    private void SelectOverlapUnits()
-    {
-        Vector3 min = Vector3.zero;
-        Vector3 center = Vector3.zero;
-        Vector3 max = Vector3.zero;
-
-        RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(new Vector3(drawnRect.position.x - drawnRect.width / 2f, drawnRect.position.y - drawnRect.height / 2f) + Camera.main.transform.position), out hit)) min = hit.point;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(new Vector3(drawnRect.position.x + drawnRect.width / 2f, drawnRect.position.y + drawnRect.height / 2f) + Camera.main.transform.position), out hit)) max = hit.point;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(new Vector3(drawnRect.position.x, drawnRect.position.y) + Camera.main.transform.position), out hit)) center = hit.point;
-
-        Collider[] units = Physics.OverlapBox(center, (max - min) / 2f, Quaternion.identity);
-        Debug.Log(units.Length);
-    }
-
-    // Start is called before the first frame update
-    private void Start()
-    {
-        selected_table = GetComponent<SelectedAlliesModel>();
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
     }
 }

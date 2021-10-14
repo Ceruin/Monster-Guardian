@@ -3,13 +3,10 @@ https://gamedevbeginner.com/input-in-unity-made-easy-complete-guide-to-the-new-s
 https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/manual/QuickStartGuide.html
 https://www.raywenderlich.com/9671886-new-unity-input-system-getting-started#toc-anchor-004
 
-
-
-
-
-
-
-
+Navigation AI
+Fixes
+Camera
+Basic Level Design
 
 
 

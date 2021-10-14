@@ -9,7 +9,6 @@ public class PathingController : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        //MoveToLocation(new Vector3(0, 0, 0)); // todo: remove, used for basic testing
     }
 
     public void MoveToLocation(Vector3 goal)
