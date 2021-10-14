@@ -365,11 +365,13 @@ public class SelectionController : MonoBehaviour, ISelectionActions
         for (int i = 0; i < allUnits.Length; i++)
         {
             GameObject currentUnit = allUnits[i];
-
-            bool winner = drawnRect.Contains(Camera.main.WorldToScreenPoint(currentUnit.transform.position), true);
+            Vector2 space = Camera.main.ConvertToScreen(currentUnit.transform.position);
+            Debug.Log("Space: " + space);
+            bool winner = drawnRect.Contains(space);
+            Debug.Log("Rect:" + drawnRect);
 
             //Is this unit within the square
-            if (IsWithinPolygon(currentUnit.transform.position))
+            if (winner)
             {
                 currentUnit.GetComponent<MeshRenderer>().material = selectedMaterial;
 
