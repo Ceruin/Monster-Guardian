@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 
-public class Creature : MonoBehaviour
+public class LifeSpan : MonoBehaviour
 {
     private Stopwatch lifeSpan = new Stopwatch();
     public float test = 0;
@@ -23,7 +23,7 @@ public class Creature : MonoBehaviour
             lifeSpan.Reset();
 
             GameObject noob = Instantiate(gameObject, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + test, gameObject.transform.position.z), Quaternion.identity);
-            noob.GetComponent<Creature>().test = (test + 1);
+            noob.GetComponent<LifeSpan>().test = (test + 1);
 
             Destroy(gameObject);
         }

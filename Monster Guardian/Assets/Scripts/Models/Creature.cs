@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Cube : MonoBehaviour
+public class Creature : MonoBehaviour
 {
     private UnityEngine.AI.NavMeshAgent agent;
     private Console console;
     [SerializeField] private MoveDir moveDirection = MoveDir.Forward;
     [SerializeField] private float power = 6;
-    [SerializeField] private bool ISCUBE = false;
+    [SerializeField] public bool ISCUBE;
     public GameObject explodeEffect;
     // https://chao-island.com/wiki/Actions
 
@@ -141,7 +141,7 @@ public class Cube : MonoBehaviour
         Queue<GameObject> sObjects = new Queue<GameObject>(2);
         foreach (Collider collider in colliders)
         {
-            if (collider.gameObject.GetComponent<Voreable>() != null)
+            if (collider.gameObject.GetComponent<Consumable>() != null)
             {
                 float dis1, dis2 = 99999;
                 dis1 = Vector3.Distance(cubePOS, collider.gameObject.transform.position);
@@ -172,6 +172,8 @@ public class Cube : MonoBehaviour
     private void Update()
     {
     }
+
+    public Vector3 WorldPos { get; set; }
 }
 
 public class RandomPointOnNavMesh

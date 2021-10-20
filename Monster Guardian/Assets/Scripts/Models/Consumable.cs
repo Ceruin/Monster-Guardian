@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Voreable : MonoBehaviour
+public class Consumable : MonoBehaviour
 {
     // Restriction
     // Amount Hunger
