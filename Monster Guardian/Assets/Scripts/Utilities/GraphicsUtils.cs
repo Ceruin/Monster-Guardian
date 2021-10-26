@@ -2,6 +2,11 @@ using UnityEngine;
 
 public static class GraphicsUtils
 {
+    public static void PrintToConsoleAndGUI<T>(this Console console, T whatever)
+    {
+        if (console != null) console.UpdateGUI(whatever.ToString());
+    }
+
     private static Texture2D _whiteTexture;
 
     public static Texture2D WhiteTexture

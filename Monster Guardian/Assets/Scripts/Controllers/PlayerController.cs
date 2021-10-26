@@ -10,4 +10,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
     }
+
+    // command player to move around
+    // camera lock onto player
 }

@@ -1,32 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using static ControlManager;
 
 public class SelectionController : MonoBehaviour, ISelectionActions
 {
-    //Add all units in the scene to this array
-    public GameObject[] allUnits;
+    public GameObject[] allUnits; // Add all units in the scene to this array
 
     public Material highlightMaterial;
-
-    //The materials
     public Material normalMaterial;
-
     public Material selectedMaterial;
 
-    //All currently selected units
     [System.NonSerialized]
-    public List<GameObject> selectedUnits = new List<GameObject>();
+    public List<GameObject> selectedUnits = new List<GameObject>();  // All currently selected units
 
     private Rect drawnRect;
 
-    //If it was possible to create a square
-    private bool hasCreatedSquare;
+    private bool hasCreatedSquare; // If it was possible to create a square
 
-    //We have hovered above this unit, so we can deselect it next update
-    //and dont have to loop through all units
-    private GameObject highlightThisUnit;
+    private GameObject highlightThisUnit; // We have hovered above this unit, so we can deselect it next update
 
     private bool isClicking = false;
     private bool isHoldingDown = false;
@@ -104,20 +97,17 @@ public class SelectionController : MonoBehaviour, ISelectionActions
 
     public void OnMoveSelection(InputAction.CallbackContext context)
     {
-        //Debug.Log(nameof(OnMoveSelection));
         if (context.performed)
         {
             foreach (var item in selectedUnits)
             {
-                item.GetComponent<PathingController>().MoveToLocation(worldMousePOS);
-                //Debug.Log($"Try Move: {worldMousePOS}");
+                item.GetComponent<NavMeshAgent>().Move(worldMousePOS);
             }
         }
     }
 
     public void OnStartSelection(InputAction.CallbackContext context)
     {
-        // Debug.Log(nameof(OnStartSelection));
         if (context.performed)
         {
             startScreenMousePOS = new Vector3(screenMousePOS.x, screenMousePOS.y, screenMousePOS.z);
@@ -127,7 +117,6 @@ public class SelectionController : MonoBehaviour, ISelectionActions
 
     public void OnTestSuper(InputAction.CallbackContext context)
     {
-        //Debug.Log(nameof(OnTestSuper));
         if (context.performed)
         {
         }
@@ -142,11 +131,9 @@ public class SelectionController : MonoBehaviour, ISelectionActions
     //Highlight a unit when mouse is above it
     private void HighlightUnit()
     {
-        //Change material on the latest unit we highlighted
-        if (highlightThisUnit != null)
+        if (highlightThisUnit != null) // Change material on the latest unit we highlighted
         {
-            //But make sure the unit we want to change material on is not selected
-            bool isSelected = false;
+            bool isSelected = false; // But make sure the unit we want to change material on is not selected
             for (int i = 0; i < selectedUnits.Count; i++)
             {
                 if (selectedUnits[i] == highlightThisUnit)
@@ -164,19 +151,14 @@ public class SelectionController : MonoBehaviour, ISelectionActions
             highlightThisUnit = null;
         }
 
-        //Fire a ray from the mouse position to get the unit we want to highlight
-        RaycastHit hit;
-        //Fire ray from camera
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(mousePosition), out hit, 200f))
+        RaycastHit hit; // Fire a ray from the mouse position to get the unit we want to highlight
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(mousePosition), out hit, 200f)) // Fire ray from camera
         {
-            //Did we hit a friendly unit?
-            if (hit.collider.CompareTag("Friendly"))
+            if (hit.collider.CompareTag("Friendly")) // Did we hit a friendly unit?
             {
-                //Get the object we hit
-                GameObject currentObj = hit.collider.gameObject;
+                GameObject currentObj = hit.collider.gameObject; // Get the object we hit
 
-                //Highlight this unit if it's not selected
-                bool isSelected = false;
+                bool isSelected = false; // Highlight this unit if it's not selected
                 for (int i = 0; i < selectedUnits.Count; i++)
                 {
                     if (selectedUnits[i] == currentObj)
@@ -196,15 +178,12 @@ public class SelectionController : MonoBehaviour, ISelectionActions
         }
     }
 
+    // Select all units within the square if we have created a square
     private void MouseRelease()
     {
-        //Select all units within the square if we have created a square
+        selectedUnits.Clear(); // Clear the list with selected unit
 
-        //Clear the list with selected unit
-        selectedUnits.Clear();
-
-        //Select the units
-        for (int i = 0; i < allUnits.Length; i++)
+        for (int i = 0; i < allUnits.Length; i++)  // Select the units
         {
             GameObject currentUnit = allUnits[i];
             Vector2 space = Camera.main.ConvertToScreen(currentUnit.transform.position);
@@ -212,15 +191,13 @@ public class SelectionController : MonoBehaviour, ISelectionActions
             bool winner = drawnRect.Contains(space);
             Debug.Log("Rect:" + drawnRect);
 
-            //Is this unit within the square
-            if (winner)
+            if (winner) // Is this unit within the square
             {
                 currentUnit.GetComponent<MeshRenderer>().material = selectedMaterial;
 
                 selectedUnits.Add(currentUnit);
             }
-            //Otherwise deselect the unit if it's not in the square
-            else
+            else // Otherwise deselect the unit if it's not in the square
             {
                 currentUnit.GetComponent<MeshRenderer>().material = normalMaterial;
             }
@@ -247,9 +224,9 @@ public class SelectionController : MonoBehaviour, ISelectionActions
         playerControls.Selection.TestSuper.Enable();
     }
 
+    // Display the selection with a GUI image
     private void OnGUI()
     {
-        //Display the selection with a GUI image
         if (isClicking)
         {
             drawnRect = GraphicsUtils.GetScreenRect(startScreenMousePOS, screenMousePOS);
@@ -265,8 +242,6 @@ public class SelectionController : MonoBehaviour, ISelectionActions
     private void Update()
     {
         allUnits = GameObject.FindGameObjectsWithTag("Friendly"); // done every update to include constructed enemies
-
-        //Highlight by hovering with mouse above a unit which is not selected
-        HighlightUnit();
+        HighlightUnit(); // Highlight by hovering with mouse above a unit which is not selected
     }
 }
