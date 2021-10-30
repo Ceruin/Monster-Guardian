@@ -16,13 +16,9 @@ public class SelectionController : MonoBehaviour, ISelectionActions
     public List<GameObject> selectedUnits = new List<GameObject>();  // All currently selected units
 
     private Rect drawnRect;
-
-    private bool hasCreatedSquare; // If it was possible to create a square
-
     private GameObject highlightThisUnit; // We have hovered above this unit, so we can deselect it next update
 
     private bool isClicking = false;
-    private bool isHoldingDown = false;
     private Vector2 mousePosition;
 
     private ControlManager playerControls;
@@ -63,25 +59,19 @@ public class SelectionController : MonoBehaviour, ISelectionActions
     {
         if (context.performed)
         {
-            isHoldingDown = true;
         }
     }
 
     public void OnEndSelection(InputAction.CallbackContext context)
     {
-        //Debug.Log(nameof(OnEndSelection));
         if (context.performed)
         {
-            //Are we clicking with left mouse or holding down left mouse
-            //SingleSelect();
             isClicking = false;
-            isHoldingDown = false;
-
             MouseRelease();
 
             if (selectedUnits.Count > 0)
             {
-                FileUtils.Save("test", FileUtils.ToJson<GameObject>(selectedUnits.ToArray(), true));
+                //FileUtils.Save("test", FileUtils.ToJson(selectedUnits.ToArray(), true));
             }
         }
     }
@@ -89,10 +79,7 @@ public class SelectionController : MonoBehaviour, ISelectionActions
     // the constant mouse postion in screen pos
     public void OnMousePosition(InputAction.CallbackContext context)
     {
-        //Debug.Log(nameof(OnMousePosition));
         mousePosition = context.ReadValue<Vector2>();
-        //Debug.Log($"Screen Mouse POS {screenMousePOS}");
-        //Debug.Log($"World Mouse POS {worldMousePOS}");
     }
 
     public void OnMoveSelection(InputAction.CallbackContext context)
@@ -110,8 +97,9 @@ public class SelectionController : MonoBehaviour, ISelectionActions
     {
         if (context.performed)
         {
-            startScreenMousePOS = new Vector3(screenMousePOS.x, screenMousePOS.y, screenMousePOS.z);
             isClicking = true;
+            startScreenMousePOS = new Vector3(screenMousePOS.x, screenMousePOS.y, screenMousePOS.z);
+            selectedUnits.Clear(); // Clear the list with selected unit
         }
     }
 
@@ -126,6 +114,13 @@ public class SelectionController : MonoBehaviour, ISelectionActions
     {
         playerControls = new ControlManager();
         playerControls.Selection.SetCallbacks(this);
+    }
+
+    private void DrawRectangle()
+    {
+        drawnRect = GraphicsUtils.GetScreenRect(startScreenMousePOS, screenMousePOS);
+        GraphicsUtils.DrawScreenRect(drawnRect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
+        GraphicsUtils.DrawScreenRectBorder(drawnRect, 2, new Color(0.8f, 0.8f, 0.95f));
     }
 
     //Highlight a unit when mouse is above it
@@ -178,32 +173,30 @@ public class SelectionController : MonoBehaviour, ISelectionActions
         }
     }
 
+    private bool IsWinner(GameObject currentUnit)
+    {
+        Vector2 space = Camera.main.ConvertToScreen(currentUnit.transform.position);
+        bool winner = drawnRect.Contains(space);
+        return winner;
+    }
+
     // Select all units within the square if we have created a square
     private void MouseRelease()
     {
-        selectedUnits.Clear(); // Clear the list with selected unit
-
         for (int i = 0; i < allUnits.Length; i++)  // Select the units
         {
             GameObject currentUnit = allUnits[i];
-            Vector2 space = Camera.main.ConvertToScreen(currentUnit.transform.position);
-            Debug.Log("Space: " + space);
-            bool winner = drawnRect.Contains(space);
-            Debug.Log("Rect:" + drawnRect);
-
-            if (winner) // Is this unit within the square
+            if (IsWinner(currentUnit)) // Is this unit within the square
             {
-                currentUnit.GetComponent<MeshRenderer>().material = selectedMaterial;
-
                 selectedUnits.Add(currentUnit);
+                //currentUnit.GetComponent<MeshRenderer>().material = selectedMaterial;
             }
             else // Otherwise deselect the unit if it's not in the square
             {
-                currentUnit.GetComponent<MeshRenderer>().material = normalMaterial;
+                //currentUnit.GetComponent<MeshRenderer>().material = normalMaterial;
             }
         }
     }
-
     private void OnDisable()
     {
         playerControls.Selection.StartSelection.Disable();
@@ -229,12 +222,9 @@ public class SelectionController : MonoBehaviour, ISelectionActions
     {
         if (isClicking)
         {
-            drawnRect = GraphicsUtils.GetScreenRect(startScreenMousePOS, screenMousePOS);
-            GraphicsUtils.DrawScreenRect(drawnRect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
-            GraphicsUtils.DrawScreenRectBorder(drawnRect, 2, new Color(0.8f, 0.8f, 0.95f));
+            DrawRectangle();
         }
     }
-
     private void Start()
     {
     }
@@ -242,6 +232,6 @@ public class SelectionController : MonoBehaviour, ISelectionActions
     private void Update()
     {
         allUnits = GameObject.FindGameObjectsWithTag("Friendly"); // done every update to include constructed enemies
-        HighlightUnit(); // Highlight by hovering with mouse above a unit which is not selected
+        //HighlightUnit(); // Highlight by hovering with mouse above a unit which is not selected
     }
 }

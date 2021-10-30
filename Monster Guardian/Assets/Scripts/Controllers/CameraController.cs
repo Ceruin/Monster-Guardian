@@ -11,7 +11,6 @@ public class CameraController : MonoBehaviour, ICameraMovementActions
     {
         if (context.performed)
         {
-            Debug.Log("Movement: " + context.ReadValue<Vector2>());
             move = context.ReadValue<Vector2>();
         }
         else
@@ -28,7 +27,6 @@ public class CameraController : MonoBehaviour, ICameraMovementActions
 
     private void FixedUpdate()
     {
-        Debug.Log(move);
         Camera.main.transform.position += new Vector3(move.x, 0, move.y) * Time.deltaTime * moveSpeed;
     }
     private void OnDisable()

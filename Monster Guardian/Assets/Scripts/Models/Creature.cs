@@ -2,6 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// left click to attack
+// incubator
+// random ore
+// health bars
+// allies/enemies radius
+// main char movement
+
 /// <summary>
 /// https://chao-island.com/wiki/Actions
 /// </summary>
@@ -10,14 +17,14 @@ public class Creature : MonoBehaviour
     private UnityEngine.AI.NavMeshAgent agent;
     private Console console;
     public GameObject ExplodeEffect { get; set; }
+    public Vector3 Location { get; set; }
+    public float SearchRadius { get; set; } = 10.0f;
     public GameObject Target { get; private set; }
     public Vector3 WorldPos { get; set; }
-    private int Damage { get; set; } = 5;
+    private int Damage { get; set; } = 5; // damage
     private HungerStatus Hunger { get; set; } = HungerStatus.Full; // food
-                                                                   // damage
-    private int Life { get; set; } = 100; // life
-    public float SearchRadius { get; set; } = 10.0f;
 
+    private int Life { get; set; } = 100; // life
     private void CheckConsume()
     {
         var cubePOS = this.transform.position;
@@ -68,7 +75,7 @@ public class Creature : MonoBehaviour
             yield return new WaitForSeconds(5);
 
             CheckConsume();
-            
+
             if (Target == null) { agent.Move(NavUtils.RandomPoint(transform.position, SearchRadius)); }
             else
             {
@@ -99,5 +106,6 @@ public class Creature : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        Location = this.transform.position;
     }
 }
