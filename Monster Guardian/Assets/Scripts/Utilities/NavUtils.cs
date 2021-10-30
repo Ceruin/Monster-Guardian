@@ -8,7 +8,7 @@ using UnityEngine.AI;
 
 public static class NavUtils
 {
-    public static void Move(this NavMeshAgent agent, Vector3 goal)
+    public static void Path(this NavMeshAgent agent, Vector3 goal)
     {
         agent.destination = goal;
     }
