@@ -264,7 +264,6 @@ GameObject:
   - component: {fileID: 442237250}
   - component: {fileID: 442237249}
   - component: {fileID: 442237248}
-  - component: {fileID: 442237252}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -349,18 +348,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &442237252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 442237247}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11210481e6919764bb592fb32a8564ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &449890392 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8164078558771037576, guid: 05a0460fc7ce44e4f936235a6629c5f9,
@@ -892,11 +879,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1414739658}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 370a01bcc9ebde94ebe2726657238a47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Life:
+    HealthPoints: 0
+  ExplodeEffect: {fileID: 0}
+  Location: {x: 0, y: 0, z: 0}
+  SearchRadius: 10
+  Target: {fileID: 0}
+  WorldPos: {x: 0, y: 0, z: 0}
 --- !u!1 &1872069314
 GameObject:
   m_ObjectHideFlags: 0
