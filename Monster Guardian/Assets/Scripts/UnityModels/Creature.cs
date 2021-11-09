@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 // left click to attack
 // incubator
@@ -16,20 +17,17 @@ public class Creature : MonoBehaviour
 {
     [SerializeField]
     public Life Life;
+    [SerializeField]
+    public Attack Attack;
+    [SerializeField]
+    public Effects Effects;
+    [SerializeField]
+    public AI AI;
 
-    private UnityEngine.AI.NavMeshAgent agent;
-    private Console console;
-    public GameObject ExplodeEffect;
-    public Vector3 Location;
-    public float SearchRadius = 10.0f;
-    public GameObject Target;
-    public Vector3 WorldPos;
-    private int Damage = 5; // damage
-    private HungerStatus Hunger = HungerStatus.Full; // food
     private void CheckConsume()
     {
         var cubePOS = this.transform.position;
-        var colliders = Physics.OverlapSphere(cubePOS, SearchRadius);
+        var colliders = Physics.OverlapSphere(cubePOS, Attack.SearchRadius);
         Queue<GameObject> sObjects = new Queue<GameObject>(2);
         foreach (Collider collider in colliders)
         {
@@ -57,15 +55,15 @@ public class Creature : MonoBehaviour
                 }
             }
         }
-        if (sObjects.Count > 0) { Target = sObjects.Dequeue(); }
+        if (sObjects.Count > 0) { Attack.Target = sObjects.Dequeue(); }
     }
 
     private void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject == Target)
+        if (collision.gameObject == Attack.Target)
         {
-            Instantiate(ExplodeEffect, Target.transform.position + (transform.up * 1.5f), Quaternion.identity);
-            Destroy(Target.transform.parent.gameObject);
+            Instantiate(Effects.ExplodeEffect, Attack.Target.transform.position + (transform.up * 1.5f), Quaternion.identity);
+            Destroy(Attack.Target.transform.parent.gameObject);
         }
     }
 
@@ -77,13 +75,13 @@ public class Creature : MonoBehaviour
 
             CheckConsume();
 
-            if (Target == null) { agent.PathRandom(transform.position, SearchRadius); }
+            if (Attack.Target == null) { AI.agent.PathRandom(transform.position, Attack.SearchRadius); }
             else
             {
-                agent.Path(Target.transform.position);
+                AI.agent.Path(Attack.Target.transform.position);
             }
 
-            if (Target == null)
+            if (Attack.Target == null)
             {
                 yield return new WaitForSeconds(5);
             }
@@ -97,8 +95,7 @@ public class Creature : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        console = FindObjectOfType<Console>();
+        AI.agent = GetComponent<NavMeshAgent>();
 
         CheckConsume();
         StartCoroutine(PathToPoint());
@@ -107,6 +104,6 @@ public class Creature : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        Location = this.transform.position;
+        AI.Location = this.transform.position;
     }
 }
