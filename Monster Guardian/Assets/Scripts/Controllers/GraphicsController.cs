@@ -2,24 +2,12 @@ using UnityEngine;
 
 public static class GraphicsController
 {
-    public static void DrawRect()
+    public static Rect DrawRectangle(Vector3 screenPosition1, Vector3 screenPosition2)
     {
-        new RectTransform();
-    }
-
-    public static void DrawScreenRect(Rect rect, Color color)
-    {
-        GUI.color = color;
-        GUI.DrawTexture(rect, WhiteTexture());
-        GUI.color = Color.white;
-    }
-
-    public static void DrawScreenRectBorder(Rect rect, float thickness, Color color)
-    {
-        DrawScreenRect(new Rect(rect.xMin, rect.yMin, rect.width, thickness), color); // Top
-        DrawScreenRect(new Rect(rect.xMin, rect.yMin, thickness, rect.height), color); // Left
-        DrawScreenRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color); // Right
-        DrawScreenRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);  // Bottom
+        Rect drawnRect = GraphicsController.GetScreenRect(screenPosition1, screenPosition2);
+        drawnRect.DrawScreen(new Color(0.8f, 0.8f, 0.95f, 0.25f));
+        drawnRect.DrawBorder(2, new Color(0.8f, 0.8f, 0.95f));
+        return drawnRect;
     }
 
     public static Rect GetScreenRect(Vector3 screenPosition1, Vector3 screenPosition2)

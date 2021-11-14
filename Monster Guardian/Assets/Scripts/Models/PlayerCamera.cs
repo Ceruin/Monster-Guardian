@@ -4,7 +4,7 @@ using static ControlManager;
 
 public class PlayerCamera : MonoBehaviour, ICameraMovementActions
 {
-    public int moveSpeed = 5;
+    public int moveSpeed = 5; // default
     private Vector2 move = Vector2.zero;
     private ControlManager playerControls;
 

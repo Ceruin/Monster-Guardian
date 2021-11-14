@@ -1,29 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using UnityEngine;
 
-namespace Assets.Scripts.Extensions
+public static class FileExtensions
 {
-    public static class FileExtensions
+    public static FileInfo GetAppFile(string file)
     {
-        public static FileInfo GetAppFile(string file)
-        {
-            var assemblyPath = Application.persistentDataPath;
-            return new FileInfo(Path.Combine(assemblyPath, file));
+        var assemblyPath = Application.persistentDataPath;
+        return new FileInfo(Path.Combine(assemblyPath, file));
     }
 
-        public static void SaveJson(this string file, string json)
-        {
-            File.WriteAllText(file, json);
-        }
+    public static T LoadJson<T>(this string file)
+    {
+        return File.ReadAllText(file).FromJson<T>();
+    }
 
-        public static T LoadJson<T>(this string file)
-        {
-            return File.ReadAllText(file).FromJson<T>();
-        }
+    public static void SaveJson(this string file, string json)
+    {
+        File.WriteAllText(file, json);
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,15 +10,13 @@ public class Player : MonoBehaviour, ISelectionActions
     [System.NonSerialized]
     public List<GameObject> selectedUnits = new List<GameObject>();
 
-    [SerializeField]
-    public GameObject TEST;
-
     private GameObject[] allUnits;
 
     private Rect drawnRect;
 
     private Vector2 mousePosition;
     private ControlManager playerControls;
+
     public Vector3 screenMousePOS
     {
         get
@@ -27,6 +26,7 @@ public class Player : MonoBehaviour, ISelectionActions
     }
 
     public Vector3 startScreenMousePOS { get; set; }
+
     public Vector3 startScreenWorldPOS
     {
         get
@@ -50,6 +50,7 @@ public class Player : MonoBehaviour, ISelectionActions
     }
 
     private bool isClicking { get; set; } = false;
+
     public void OnContinueSelection(InputAction.CallbackContext context)
     {
         if (context.performed)
@@ -92,6 +93,7 @@ public class Player : MonoBehaviour, ISelectionActions
         }
     }
 
+    [Obsolete]
     public void OnTestSuper(InputAction.CallbackContext context)
     {
         if (context.performed)
@@ -105,16 +107,14 @@ public class Player : MonoBehaviour, ISelectionActions
         playerControls.Selection.SetCallbacks(this);
     }
 
-    private void DrawRectangle()
-    {
-        drawnRect = GraphicsController.GetScreenRect(startScreenMousePOS, screenMousePOS);
-        GraphicsController.DrawScreenRect(drawnRect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
-        GraphicsController.DrawScreenRectBorder(drawnRect, 2, new Color(0.8f, 0.8f, 0.95f));
-    }
-
+    /// <summary>
+    /// Checks to see if the object is inside of our drawn rect
+    /// This will be based on the objects PIVOT POINT
+    /// </summary>
+    /// <param name="currentUnit"></param>
+    /// <returns></returns>
     private bool IsWinner(GameObject currentUnit)
     {
-        // so it seems all of this relies on the pivot point of the object
         Vector2 space = Camera.main.ConvertToScreen(currentUnit.transform.position); // for this I think the rectangle contains checks something wrong(?) so it needs to be converted
         return drawnRect.Contains(space);
     }
@@ -155,12 +155,12 @@ public class Player : MonoBehaviour, ISelectionActions
     {
         if (isClicking)
         {
-            DrawRectangle();
+            drawnRect = GraphicsController.DrawRectangle(startScreenMousePOS, screenMousePOS);
         }
     }
 
     private void Update()
     {
-        allUnits = GameObject.FindGameObjectsWithTag("Friendly"); // done every update to include constructed enemies
+        allUnits = GameObject.FindGameObjectsWithTag(TeamStatus.Friendly.ToString()); // done every update to include constructed enemies
     }
 }

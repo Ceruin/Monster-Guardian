@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
+using UnityEngine;
 
 [Serializable]
-public class Life
+public class Life : MonoBehaviour
 {
     public int HealthPoints;
 
     public TimeSpan TimeToLive;
 
     private Stopwatch LifeTimer = new Stopwatch();
+
+    public GameObject ExplodeEffect;
 
     public bool Dead
     {
@@ -26,5 +29,21 @@ public class Life
     public void Stop()
     {
         LifeTimer.Stop();
+    }
+
+    public void Death()
+    {
+        Instantiate(ExplodeEffect, this.transform.position + (transform.up * 1.5f), Quaternion.identity);
+        Destroy(this);
+    }
+
+    public void Heal()
+    {
+
+    }
+
+    public void TakeDamage()
+    {
+
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Unity.Models
 {
-    public class HealthView : MonoBehaviour
+    public class HealthUI : MonoBehaviour
     {
         [SerializeField] TMP_Text Text;
         Life life;

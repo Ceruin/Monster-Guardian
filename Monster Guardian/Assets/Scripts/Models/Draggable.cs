@@ -1,27 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Makes object draggable in UI
+/// </summary>
 public class Draggable : MonoBehaviour
 {
-    private Vector3 mOffset;
-    private float mZCoord;
-
-    private void OnMouseDown()
-    {
-        mZCoord = Camera.main.WorldToScreenPoint(gameObject.transform.position).z;
-        mOffset = gameObject.transform.position - GetMouseWorldPos(); // store offset = gameobj world pos - mouse world pos
-    }
+    private Vector3 _offset;
+    private float _zcord;
 
     private Vector3 GetMouseWorldPos()
     {
         Vector3 mousePoint = Input.mousePosition; // x, y
-        mousePoint.z = mZCoord; // z
+        mousePoint.z = _zcord; // z
         return Camera.main.ScreenToWorldPoint(mousePoint);
     }
 
+    private void OnMouseDown()
+    {
+        _zcord = Camera.main.WorldToScreenPoint(gameObject.transform.position).z;
+        _offset = gameObject.transform.position - GetMouseWorldPos(); // store offset = gameobj world pos - mouse world pos
+    }
     private void OnMouseDrag()
     {
-        transform.position = GetMouseWorldPos() + mOffset;
+        transform.position = GetMouseWorldPos() + _offset;
     }
 }

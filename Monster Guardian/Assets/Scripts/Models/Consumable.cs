@@ -1,12 +1,12 @@
-﻿
+﻿using System;
 using UnityEngine;
 
+/// <summary>
+/// Represents a consumable object, these values are fed into various systems
+/// </summary>
+[Serializable]
 public class Consumable : MonoBehaviour
 {
-    // Restriction
-
     public int HungerValue { get; set; } // Amount Hunger
     public int LifeValue { get; set; }  // Amount Life
-
-    // todo: some method that will allow you to get the value to reduce the creatures hunger by and then decrement the foods life by
 }

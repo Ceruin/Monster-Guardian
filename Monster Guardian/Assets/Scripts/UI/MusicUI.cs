@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MusicSlider : MonoBehaviour
+public class MusicUI : MonoBehaviour
 {
     [SerializeField] AudioSource audios;
     [SerializeField] Slider slider;

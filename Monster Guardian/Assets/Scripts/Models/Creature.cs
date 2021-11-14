@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AI;
 
+// todo:
 // left click to attack
 // incubator
 // random ore
@@ -16,74 +13,50 @@ using UnityEngine.AI;
 /// </summary>
 public class Creature : MonoBehaviour
 {
-    [SerializeField]
-    public Life Life;
-    [SerializeField]
-    public Attack Attack;
-    [SerializeField]
-    public Effects Effects;
-    [SerializeField]
     public AI AI;
+    public Attack Attack;
+    public Feeling Feeling;
+    public Hunger Hunger;
+    public Life Life;
+    public Selection Selection;
+    public Team Team;
+    public Traits Traits;
 
-    private void CheckConsume()
+    public void AttackTarget()
     {
-        var playerpos = this.transform.position;
-        var colliders = Physics.OverlapSphere(playerpos, Attack.SearchRadius);
-        Queue<GameObject> sObjects = new Queue<GameObject>(2);
-        foreach (Collider collider in colliders)
-        {
-            if (collider.gameObject.GetComponent<Consumable>() != null)
-            {
-                float dis1, dis2 = 99999;
-                dis1 = Vector3.Distance(playerpos, collider.gameObject.transform.position);
-                if (sObjects.Count > 0)
-                {
-                    var collider2 = sObjects.Dequeue();
-                    dis2 = Vector3.Distance(playerpos, collider2.gameObject.transform.position);
-
-                    if (dis1 < dis2)
-                    {
-                        sObjects.Enqueue(collider.gameObject);
-                    }
-                    else
-                    {
-                        sObjects.Enqueue(collider2.gameObject);
-                    }
-                }
-                else
-                {
-                    sObjects.Enqueue(collider.gameObject);
-                }
-            }
-        }
-        if (sObjects.Count > 0) { Attack.Target = sObjects.Dequeue(); }
     }
 
-    private void OnCollisionStay(Collision collision)
+    public void Breed()
     {
-        if (collision.gameObject == Attack.Target)
-        {
-            Instantiate(Effects.ExplodeEffect, Attack.Target.transform.position + (transform.up * 1.5f), Quaternion.identity);
-            Destroy(Attack.Target.transform.parent.gameObject);
-        }
+    }
+
+    public void Eat()
+    {
+    }
+
+    public void Evolve()
+    {
+    }
+
+    public void Move()
+    {
+    }
+
+    public void Play()
+    {
+    }
+
+    public void Sleep()
+    {
     }
 
     // Start is called before the first frame update
     private void Start()
     {
-        AI.Agent = this.GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
     private void Update()
     {
-        CheckConsume();
-    }
-
-    private void Idle()
-    {
-        if (AI.Agent.pathStatus == NavMeshPathStatus.PathComplete) {
-            AI.Agent.PathRandom(transform.position, Attack.SearchRadius);
-        }
     }
 }
