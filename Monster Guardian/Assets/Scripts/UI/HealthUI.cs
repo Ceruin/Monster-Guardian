@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
-namespace Assets.Scripts.Unity.Models
+namespace Assets.Scripts
 {
     public class HealthUI : MonoBehaviour
     {

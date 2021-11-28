@@ -1,27 +1,21 @@
 using System;
 using UnityEngine;
 
-[Serializable]
-public class Selection : MonoBehaviour
+namespace Assets.Scripts
 {
-    public bool Selected { get; set; } = false;
-
-    public void DeSelect()
+    [Serializable]
+    public class Selection : MonoBehaviour
     {
-        Selected = false;
-    }
+        public bool Selected { get; set; } = false;
 
-    public void Select()
-    {
-        Selected = true;
-    }
+        public void DeSelect()
+        {
+            Selected = false;
+        }
 
-    /// <summary>
-    /// Set our active target
-    /// This could be an enemy, a station, a resource or more
-    /// </summary>
-    /// <param name="aI"></param>
-    public void SetTarget(AI aI)
-    {
+        public void Select()
+        {
+            Selected = true;
+        }
     }
 }

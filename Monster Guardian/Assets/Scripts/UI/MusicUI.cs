@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MusicUI : MonoBehaviour
+namespace Assets.Scripts
 {
-    [SerializeField] AudioSource audios;
-    [SerializeField] Slider slider;
-
-    public void ChangeAudio()
+    public class MusicUI : MonoBehaviour
     {
-        audios.volume = slider.value;
+        [SerializeField] AudioSource audios;
+        [SerializeField] Slider slider;
+
+        public void ChangeAudio()
+        {
+            audios.volume = slider.value;
+        }
     }
 }

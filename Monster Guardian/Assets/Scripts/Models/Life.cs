@@ -2,48 +2,51 @@
 using System.Diagnostics;
 using UnityEngine;
 
-[Serializable]
-public class Life : MonoBehaviour
+namespace Assets.Scripts
 {
-    public int HealthPoints;
-
-    public TimeSpan TimeToLive;
-
-    private Stopwatch LifeTimer = new Stopwatch();
-
-    public GameObject ExplodeEffect;
-
-    public bool Dead
+    [Serializable]
+    public class Life : MonoBehaviour
     {
-        get
+        public int HealthPoints;
+
+        public TimeSpan TimeToLive;
+
+        private Stopwatch LifeTimer = new Stopwatch();
+
+        public GameObject ExplodeEffect;
+
+        public bool Dead
         {
-            return !LifeTimer.IsRunning || LifeTimer.Elapsed >= TimeToLive || HealthPoints <= 0;
+            get
+            {
+                return !LifeTimer.IsRunning || LifeTimer.Elapsed >= TimeToLive || HealthPoints <= 0;
+            }
         }
-    }
 
-    public void Start()
-    {
-        LifeTimer.Start();
-    }
+        public void Start()
+        {
+            LifeTimer.Start();
+        }
 
-    public void Stop()
-    {
-        LifeTimer.Stop();
-    }
+        public void Stop()
+        {
+            LifeTimer.Stop();
+        }
 
-    public void Death()
-    {
-        Instantiate(ExplodeEffect, this.transform.position + (transform.up * 1.5f), Quaternion.identity);
-        Destroy(this);
-    }
+        public void Death()
+        {
+            Instantiate(ExplodeEffect, transform.position + transform.up * 1.5f, Quaternion.identity);
+            Destroy(this);
+        }
 
-    public void Heal()
-    {
+        public void Heal(int health)
+        {
+            HealthPoints += health;
+        }
 
-    }
-
-    public void TakeDamage()
-    {
-
+        public void TakeDamage(int damage)
+        {
+            HealthPoints -= damage;
+        }
     }
 }

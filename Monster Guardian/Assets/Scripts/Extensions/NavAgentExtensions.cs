@@ -1,15 +1,28 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-public static class NavAgentExtensions
+namespace Assets.Scripts
 {
-    public static void Path(this NavMeshAgent agent, Vector3 goal)
+    public static class NavAgentExtensions
     {
-        agent.destination = goal;
-    }
+        public static void Path(this NavMeshAgent agent, Vector3? goal)
+        {
+            if (goal.HasValue)
+            {
+                //agent.SetDestination(goal.Value);
+                var path = new NavMeshPath();
+                NavMesh.CalculatePath(agent.gameObject.transform.position, goal.Value, NavMesh.AllAreas, path);
+                agent.SetPath(path);
+            }
+            else 
+            {
+                agent.ResetPath();
+            }
+        }
 
-    public static void PathRandom(this NavMeshAgent agent, Vector3 center, float range)
-    {
-        agent.Path(NavMeshController.RandomPoint(center, range));
+        public static void PathRandom(this NavMeshAgent agent, Vector3 center, float range)
+        {
+            agent.Path(NavMeshController.RandomPoint(center, range));
+        }
     }
 }

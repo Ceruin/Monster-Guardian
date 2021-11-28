@@ -1,15 +1,18 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public static class CollectionExtensions
+namespace Assets.Scripts
 {
-    public static string ToJson<T>(this ICollection<T> collection)
+    public static class CollectionExtensions
     {
-        return JsonUtility.ToJson(collection);
-    }
+        public static string ToJson<T>(this ICollection<T> collection)
+        {
+            return JsonUtility.ToJson(collection);
+        }
 
-    public static string ToJson<T>(this ICollection<T> collection, bool prettyPrint)
-    {
-        return JsonUtility.ToJson(collection, prettyPrint);
+        public static string ToJson<T>(this ICollection<T> collection, bool prettyPrint)
+        {
+            return JsonUtility.ToJson(collection, prettyPrint);
+        }
     }
 }

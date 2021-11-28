@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 
-public static class StringExtensions
+namespace Assets.Scripts
 {
-    public static T FromJson<T>(this string json)
+    public static class StringExtensions
     {
-        return JsonUtility.FromJson<T>(json);
-    }
+        public static T FromJson<T>(this string json)
+        {
+            return JsonUtility.FromJson<T>(json);
+        }
 
-    public static string ToJson(this object obj)
-    {
-        return JsonUtility.ToJson(obj, true);
+        public static string ToJson(this object obj)
+        {
+            return JsonUtility.ToJson(obj, true);
+        }
     }
 }

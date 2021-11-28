@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// Class representation of a pet item
-/// </summary>
-public class Food : MonoBehaviour
+namespace Assets.Scripts
 {
-    [SerializeField]
-    public Life Life;
 
-    private Consumable Consumable;
+    /// <summary>
+    /// Class representation of a pet item
+    /// </summary>
+    public class Food : MonoBehaviour
+    {
+        [SerializeField]
+        public Life Life;
+
+        private Consumable Consumable;
+    }
 }

@@ -1,15 +1,18 @@
 ﻿using System;
 using UnityEngine;
 
-[Serializable]
-public class Team : MonoBehaviour
+namespace Assets.Scripts
 {
-    private TeamStatus Status { get; set; }
-
-    private void Start()
+    [Serializable]
+    public class Team : MonoBehaviour
     {
-        TeamStatus _status;
-        Enum.TryParse(this.tag, out _status);
-        Status = _status;
+        private TeamStatus Status { get; set; }
+
+        private void Start()
+        {
+            TeamStatus _status;
+            Enum.TryParse(tag, out _status);
+            Status = _status;
+        }
     }
 }

@@ -1,43 +1,46 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static ControlManager;
+using static Assets.Scripts.ControlManager;
 
-public class PlayerCamera : MonoBehaviour, ICameraMovementActions
+namespace Assets.Scripts
 {
-    public int moveSpeed = 5; // default
-    private Vector2 move = Vector2.zero;
-    private ControlManager playerControls;
-
-    public void OnMovement(InputAction.CallbackContext context)
+    public class PlayerCamera : MonoBehaviour, ICameraMovementActions
     {
-        if (context.performed)
+        public int moveSpeed = 5; // default
+        private Vector2 move = Vector2.zero;
+        private ControlManager playerControls;
+
+        public void OnMovement(InputAction.CallbackContext context)
         {
-            move = context.ReadValue<Vector2>();
+            if (context.performed)
+            {
+                move = context.ReadValue<Vector2>();
+            }
+            else
+            {
+                move = Vector2.zero;
+            }
         }
-        else
+
+        private void Awake()
         {
-            move = Vector2.zero;
+            playerControls = new ControlManager();
+            playerControls.CameraMovement.SetCallbacks(this);
         }
-    }
 
-    private void Awake()
-    {
-        playerControls = new ControlManager();
-        playerControls.CameraMovement.SetCallbacks(this);
-    }
+        private void FixedUpdate()
+        {
+            Camera.main.transform.position += new Vector3(move.x, 0, move.y) * Time.deltaTime * moveSpeed;
+        }
 
-    private void FixedUpdate()
-    {
-        Camera.main.transform.position += new Vector3(move.x, 0, move.y) * Time.deltaTime * moveSpeed;
-    }
+        private void OnDisable()
+        {
+            playerControls.CameraMovement.Movement.Disable();
+        }
 
-    private void OnDisable()
-    {
-        playerControls.CameraMovement.Movement.Disable();
-    }
-
-    private void OnEnable()
-    {
-        playerControls.CameraMovement.Movement.Enable();
+        private void OnEnable()
+        {
+            playerControls.CameraMovement.Movement.Enable();
+        }
     }
 }

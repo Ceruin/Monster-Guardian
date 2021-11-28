@@ -1,13 +1,17 @@
 using UnityEngine;
 
-/// <summary>
-/// Forces the object to always face the camera
-/// </summary>
-public class FaceCamera : MonoBehaviour
+namespace Assets.Scripts
 {
-    // Update is called once per frame
-    private void Update()
+
+    /// <summary>
+    /// Forces the object to always face the camera
+    /// </summary>
+    public class FaceCamera : MonoBehaviour
     {
-        transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+        // Update is called once per frame
+        private void Update()
+        {
+            transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+        }
     }
 }

@@ -6,12 +6,14 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-public class @ControlManager : IInputActionCollection, IDisposable
+namespace Assets.Scripts
 {
-    public InputActionAsset asset { get; }
-    public @ControlManager()
+    public class @ControlManager : IInputActionCollection, IDisposable
     {
-        asset = InputActionAsset.FromJson(@"{
+        public InputActionAsset asset { get; }
+        public @ControlManager()
+        {
+            asset = InputActionAsset.FromJson(@"{
     ""name"": ""ControlManager"",
     ""maps"": [
         {
@@ -210,179 +212,180 @@ public class @ControlManager : IInputActionCollection, IDisposable
     ],
     ""controlSchemes"": []
 }");
+            // Camera Movement
+            m_CameraMovement = asset.FindActionMap("Camera Movement", throwIfNotFound: true);
+            m_CameraMovement_Movement = m_CameraMovement.FindAction("Movement", throwIfNotFound: true);
+            // Selection
+            m_Selection = asset.FindActionMap("Selection", throwIfNotFound: true);
+            m_Selection_StartSelection = m_Selection.FindAction("Start Selection", throwIfNotFound: true);
+            m_Selection_ContinueSelection = m_Selection.FindAction("Continue Selection", throwIfNotFound: true);
+            m_Selection_EndSelection = m_Selection.FindAction("End Selection", throwIfNotFound: true);
+            m_Selection_MousePosition = m_Selection.FindAction("Mouse Position", throwIfNotFound: true);
+            m_Selection_MoveSelection = m_Selection.FindAction("Move Selection", throwIfNotFound: true);
+            m_Selection_TestSuper = m_Selection.FindAction("Test Super", throwIfNotFound: true);
+        }
+
+        public void Dispose()
+        {
+            UnityEngine.Object.Destroy(asset);
+        }
+
+        public InputBinding? bindingMask
+        {
+            get => asset.bindingMask;
+            set => asset.bindingMask = value;
+        }
+
+        public ReadOnlyArray<InputDevice>? devices
+        {
+            get => asset.devices;
+            set => asset.devices = value;
+        }
+
+        public ReadOnlyArray<InputControlScheme> controlSchemes => asset.controlSchemes;
+
+        public bool Contains(InputAction action)
+        {
+            return asset.Contains(action);
+        }
+
+        public IEnumerator<InputAction> GetEnumerator()
+        {
+            return asset.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public void Enable()
+        {
+            asset.Enable();
+        }
+
+        public void Disable()
+        {
+            asset.Disable();
+        }
+
         // Camera Movement
-        m_CameraMovement = asset.FindActionMap("Camera Movement", throwIfNotFound: true);
-        m_CameraMovement_Movement = m_CameraMovement.FindAction("Movement", throwIfNotFound: true);
+        private readonly InputActionMap m_CameraMovement;
+        private ICameraMovementActions m_CameraMovementActionsCallbackInterface;
+        private readonly InputAction m_CameraMovement_Movement;
+        public struct CameraMovementActions
+        {
+            private @ControlManager m_Wrapper;
+            public CameraMovementActions(@ControlManager wrapper) { m_Wrapper = wrapper; }
+            public InputAction @Movement => m_Wrapper.m_CameraMovement_Movement;
+            public InputActionMap Get() { return m_Wrapper.m_CameraMovement; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled => Get().enabled;
+            public static implicit operator InputActionMap(CameraMovementActions set) { return set.Get(); }
+            public void SetCallbacks(ICameraMovementActions instance)
+            {
+                if (m_Wrapper.m_CameraMovementActionsCallbackInterface != null)
+                {
+                    @Movement.started -= m_Wrapper.m_CameraMovementActionsCallbackInterface.OnMovement;
+                    @Movement.performed -= m_Wrapper.m_CameraMovementActionsCallbackInterface.OnMovement;
+                    @Movement.canceled -= m_Wrapper.m_CameraMovementActionsCallbackInterface.OnMovement;
+                }
+                m_Wrapper.m_CameraMovementActionsCallbackInterface = instance;
+                if (instance != null)
+                {
+                    @Movement.started += instance.OnMovement;
+                    @Movement.performed += instance.OnMovement;
+                    @Movement.canceled += instance.OnMovement;
+                }
+            }
+        }
+        public CameraMovementActions @CameraMovement => new CameraMovementActions(this);
+
         // Selection
-        m_Selection = asset.FindActionMap("Selection", throwIfNotFound: true);
-        m_Selection_StartSelection = m_Selection.FindAction("Start Selection", throwIfNotFound: true);
-        m_Selection_ContinueSelection = m_Selection.FindAction("Continue Selection", throwIfNotFound: true);
-        m_Selection_EndSelection = m_Selection.FindAction("End Selection", throwIfNotFound: true);
-        m_Selection_MousePosition = m_Selection.FindAction("Mouse Position", throwIfNotFound: true);
-        m_Selection_MoveSelection = m_Selection.FindAction("Move Selection", throwIfNotFound: true);
-        m_Selection_TestSuper = m_Selection.FindAction("Test Super", throwIfNotFound: true);
-    }
-
-    public void Dispose()
-    {
-        UnityEngine.Object.Destroy(asset);
-    }
-
-    public InputBinding? bindingMask
-    {
-        get => asset.bindingMask;
-        set => asset.bindingMask = value;
-    }
-
-    public ReadOnlyArray<InputDevice>? devices
-    {
-        get => asset.devices;
-        set => asset.devices = value;
-    }
-
-    public ReadOnlyArray<InputControlScheme> controlSchemes => asset.controlSchemes;
-
-    public bool Contains(InputAction action)
-    {
-        return asset.Contains(action);
-    }
-
-    public IEnumerator<InputAction> GetEnumerator()
-    {
-        return asset.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
-
-    public void Enable()
-    {
-        asset.Enable();
-    }
-
-    public void Disable()
-    {
-        asset.Disable();
-    }
-
-    // Camera Movement
-    private readonly InputActionMap m_CameraMovement;
-    private ICameraMovementActions m_CameraMovementActionsCallbackInterface;
-    private readonly InputAction m_CameraMovement_Movement;
-    public struct CameraMovementActions
-    {
-        private @ControlManager m_Wrapper;
-        public CameraMovementActions(@ControlManager wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Movement => m_Wrapper.m_CameraMovement_Movement;
-        public InputActionMap Get() { return m_Wrapper.m_CameraMovement; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(CameraMovementActions set) { return set.Get(); }
-        public void SetCallbacks(ICameraMovementActions instance)
+        private readonly InputActionMap m_Selection;
+        private ISelectionActions m_SelectionActionsCallbackInterface;
+        private readonly InputAction m_Selection_StartSelection;
+        private readonly InputAction m_Selection_ContinueSelection;
+        private readonly InputAction m_Selection_EndSelection;
+        private readonly InputAction m_Selection_MousePosition;
+        private readonly InputAction m_Selection_MoveSelection;
+        private readonly InputAction m_Selection_TestSuper;
+        public struct SelectionActions
         {
-            if (m_Wrapper.m_CameraMovementActionsCallbackInterface != null)
+            private @ControlManager m_Wrapper;
+            public SelectionActions(@ControlManager wrapper) { m_Wrapper = wrapper; }
+            public InputAction @StartSelection => m_Wrapper.m_Selection_StartSelection;
+            public InputAction @ContinueSelection => m_Wrapper.m_Selection_ContinueSelection;
+            public InputAction @EndSelection => m_Wrapper.m_Selection_EndSelection;
+            public InputAction @MousePosition => m_Wrapper.m_Selection_MousePosition;
+            public InputAction @MoveSelection => m_Wrapper.m_Selection_MoveSelection;
+            public InputAction @TestSuper => m_Wrapper.m_Selection_TestSuper;
+            public InputActionMap Get() { return m_Wrapper.m_Selection; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled => Get().enabled;
+            public static implicit operator InputActionMap(SelectionActions set) { return set.Get(); }
+            public void SetCallbacks(ISelectionActions instance)
             {
-                @Movement.started -= m_Wrapper.m_CameraMovementActionsCallbackInterface.OnMovement;
-                @Movement.performed -= m_Wrapper.m_CameraMovementActionsCallbackInterface.OnMovement;
-                @Movement.canceled -= m_Wrapper.m_CameraMovementActionsCallbackInterface.OnMovement;
-            }
-            m_Wrapper.m_CameraMovementActionsCallbackInterface = instance;
-            if (instance != null)
-            {
-                @Movement.started += instance.OnMovement;
-                @Movement.performed += instance.OnMovement;
-                @Movement.canceled += instance.OnMovement;
+                if (m_Wrapper.m_SelectionActionsCallbackInterface != null)
+                {
+                    @StartSelection.started -= m_Wrapper.m_SelectionActionsCallbackInterface.OnStartSelection;
+                    @StartSelection.performed -= m_Wrapper.m_SelectionActionsCallbackInterface.OnStartSelection;
+                    @StartSelection.canceled -= m_Wrapper.m_SelectionActionsCallbackInterface.OnStartSelection;
+                    @ContinueSelection.started -= m_Wrapper.m_SelectionActionsCallbackInterface.OnContinueSelection;
+                    @ContinueSelection.performed -= m_Wrapper.m_SelectionActionsCallbackInterface.OnContinueSelection;
+                    @ContinueSelection.canceled -= m_Wrapper.m_SelectionActionsCallbackInterface.OnContinueSelection;
+                    @EndSelection.started -= m_Wrapper.m_SelectionActionsCallbackInterface.OnEndSelection;
+                    @EndSelection.performed -= m_Wrapper.m_SelectionActionsCallbackInterface.OnEndSelection;
+                    @EndSelection.canceled -= m_Wrapper.m_SelectionActionsCallbackInterface.OnEndSelection;
+                    @MousePosition.started -= m_Wrapper.m_SelectionActionsCallbackInterface.OnMousePosition;
+                    @MousePosition.performed -= m_Wrapper.m_SelectionActionsCallbackInterface.OnMousePosition;
+                    @MousePosition.canceled -= m_Wrapper.m_SelectionActionsCallbackInterface.OnMousePosition;
+                    @MoveSelection.started -= m_Wrapper.m_SelectionActionsCallbackInterface.OnMoveSelection;
+                    @MoveSelection.performed -= m_Wrapper.m_SelectionActionsCallbackInterface.OnMoveSelection;
+                    @MoveSelection.canceled -= m_Wrapper.m_SelectionActionsCallbackInterface.OnMoveSelection;
+                    @TestSuper.started -= m_Wrapper.m_SelectionActionsCallbackInterface.OnTestSuper;
+                    @TestSuper.performed -= m_Wrapper.m_SelectionActionsCallbackInterface.OnTestSuper;
+                    @TestSuper.canceled -= m_Wrapper.m_SelectionActionsCallbackInterface.OnTestSuper;
+                }
+                m_Wrapper.m_SelectionActionsCallbackInterface = instance;
+                if (instance != null)
+                {
+                    @StartSelection.started += instance.OnStartSelection;
+                    @StartSelection.performed += instance.OnStartSelection;
+                    @StartSelection.canceled += instance.OnStartSelection;
+                    @ContinueSelection.started += instance.OnContinueSelection;
+                    @ContinueSelection.performed += instance.OnContinueSelection;
+                    @ContinueSelection.canceled += instance.OnContinueSelection;
+                    @EndSelection.started += instance.OnEndSelection;
+                    @EndSelection.performed += instance.OnEndSelection;
+                    @EndSelection.canceled += instance.OnEndSelection;
+                    @MousePosition.started += instance.OnMousePosition;
+                    @MousePosition.performed += instance.OnMousePosition;
+                    @MousePosition.canceled += instance.OnMousePosition;
+                    @MoveSelection.started += instance.OnMoveSelection;
+                    @MoveSelection.performed += instance.OnMoveSelection;
+                    @MoveSelection.canceled += instance.OnMoveSelection;
+                    @TestSuper.started += instance.OnTestSuper;
+                    @TestSuper.performed += instance.OnTestSuper;
+                    @TestSuper.canceled += instance.OnTestSuper;
+                }
             }
         }
-    }
-    public CameraMovementActions @CameraMovement => new CameraMovementActions(this);
-
-    // Selection
-    private readonly InputActionMap m_Selection;
-    private ISelectionActions m_SelectionActionsCallbackInterface;
-    private readonly InputAction m_Selection_StartSelection;
-    private readonly InputAction m_Selection_ContinueSelection;
-    private readonly InputAction m_Selection_EndSelection;
-    private readonly InputAction m_Selection_MousePosition;
-    private readonly InputAction m_Selection_MoveSelection;
-    private readonly InputAction m_Selection_TestSuper;
-    public struct SelectionActions
-    {
-        private @ControlManager m_Wrapper;
-        public SelectionActions(@ControlManager wrapper) { m_Wrapper = wrapper; }
-        public InputAction @StartSelection => m_Wrapper.m_Selection_StartSelection;
-        public InputAction @ContinueSelection => m_Wrapper.m_Selection_ContinueSelection;
-        public InputAction @EndSelection => m_Wrapper.m_Selection_EndSelection;
-        public InputAction @MousePosition => m_Wrapper.m_Selection_MousePosition;
-        public InputAction @MoveSelection => m_Wrapper.m_Selection_MoveSelection;
-        public InputAction @TestSuper => m_Wrapper.m_Selection_TestSuper;
-        public InputActionMap Get() { return m_Wrapper.m_Selection; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(SelectionActions set) { return set.Get(); }
-        public void SetCallbacks(ISelectionActions instance)
+        public SelectionActions @Selection => new SelectionActions(this);
+        public interface ICameraMovementActions
         {
-            if (m_Wrapper.m_SelectionActionsCallbackInterface != null)
-            {
-                @StartSelection.started -= m_Wrapper.m_SelectionActionsCallbackInterface.OnStartSelection;
-                @StartSelection.performed -= m_Wrapper.m_SelectionActionsCallbackInterface.OnStartSelection;
-                @StartSelection.canceled -= m_Wrapper.m_SelectionActionsCallbackInterface.OnStartSelection;
-                @ContinueSelection.started -= m_Wrapper.m_SelectionActionsCallbackInterface.OnContinueSelection;
-                @ContinueSelection.performed -= m_Wrapper.m_SelectionActionsCallbackInterface.OnContinueSelection;
-                @ContinueSelection.canceled -= m_Wrapper.m_SelectionActionsCallbackInterface.OnContinueSelection;
-                @EndSelection.started -= m_Wrapper.m_SelectionActionsCallbackInterface.OnEndSelection;
-                @EndSelection.performed -= m_Wrapper.m_SelectionActionsCallbackInterface.OnEndSelection;
-                @EndSelection.canceled -= m_Wrapper.m_SelectionActionsCallbackInterface.OnEndSelection;
-                @MousePosition.started -= m_Wrapper.m_SelectionActionsCallbackInterface.OnMousePosition;
-                @MousePosition.performed -= m_Wrapper.m_SelectionActionsCallbackInterface.OnMousePosition;
-                @MousePosition.canceled -= m_Wrapper.m_SelectionActionsCallbackInterface.OnMousePosition;
-                @MoveSelection.started -= m_Wrapper.m_SelectionActionsCallbackInterface.OnMoveSelection;
-                @MoveSelection.performed -= m_Wrapper.m_SelectionActionsCallbackInterface.OnMoveSelection;
-                @MoveSelection.canceled -= m_Wrapper.m_SelectionActionsCallbackInterface.OnMoveSelection;
-                @TestSuper.started -= m_Wrapper.m_SelectionActionsCallbackInterface.OnTestSuper;
-                @TestSuper.performed -= m_Wrapper.m_SelectionActionsCallbackInterface.OnTestSuper;
-                @TestSuper.canceled -= m_Wrapper.m_SelectionActionsCallbackInterface.OnTestSuper;
-            }
-            m_Wrapper.m_SelectionActionsCallbackInterface = instance;
-            if (instance != null)
-            {
-                @StartSelection.started += instance.OnStartSelection;
-                @StartSelection.performed += instance.OnStartSelection;
-                @StartSelection.canceled += instance.OnStartSelection;
-                @ContinueSelection.started += instance.OnContinueSelection;
-                @ContinueSelection.performed += instance.OnContinueSelection;
-                @ContinueSelection.canceled += instance.OnContinueSelection;
-                @EndSelection.started += instance.OnEndSelection;
-                @EndSelection.performed += instance.OnEndSelection;
-                @EndSelection.canceled += instance.OnEndSelection;
-                @MousePosition.started += instance.OnMousePosition;
-                @MousePosition.performed += instance.OnMousePosition;
-                @MousePosition.canceled += instance.OnMousePosition;
-                @MoveSelection.started += instance.OnMoveSelection;
-                @MoveSelection.performed += instance.OnMoveSelection;
-                @MoveSelection.canceled += instance.OnMoveSelection;
-                @TestSuper.started += instance.OnTestSuper;
-                @TestSuper.performed += instance.OnTestSuper;
-                @TestSuper.canceled += instance.OnTestSuper;
-            }
+            void OnMovement(InputAction.CallbackContext context);
         }
-    }
-    public SelectionActions @Selection => new SelectionActions(this);
-    public interface ICameraMovementActions
-    {
-        void OnMovement(InputAction.CallbackContext context);
-    }
-    public interface ISelectionActions
-    {
-        void OnStartSelection(InputAction.CallbackContext context);
-        void OnContinueSelection(InputAction.CallbackContext context);
-        void OnEndSelection(InputAction.CallbackContext context);
-        void OnMousePosition(InputAction.CallbackContext context);
-        void OnMoveSelection(InputAction.CallbackContext context);
-        void OnTestSuper(InputAction.CallbackContext context);
+        public interface ISelectionActions
+        {
+            void OnStartSelection(InputAction.CallbackContext context);
+            void OnContinueSelection(InputAction.CallbackContext context);
+            void OnEndSelection(InputAction.CallbackContext context);
+            void OnMousePosition(InputAction.CallbackContext context);
+            void OnMoveSelection(InputAction.CallbackContext context);
+            void OnTestSuper(InputAction.CallbackContext context);
+        }
     }
 }

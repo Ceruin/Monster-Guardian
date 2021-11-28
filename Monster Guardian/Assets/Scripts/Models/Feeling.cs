@@ -1,8 +1,11 @@
 ﻿using System;
 using UnityEngine;
 
-[Serializable]
-public class Feeling : MonoBehaviour
+namespace Assets.Scripts
 {
-    public FeelStatus Status { get; }
+    [Serializable]
+    public class Feeling : MonoBehaviour
+    {
+        public FeelStatus Status { get; }
+    }
 }
