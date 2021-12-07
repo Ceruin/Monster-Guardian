@@ -3,7 +3,6 @@ using UnityEngine.AI;
 
 namespace Assets.Scripts
 {
-
     /// <summary>
     /// The navmesh class is a singleton static, this means we cannot creat extensions or partial methods so those are all to live as statics in this class
     /// </summary>

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -19,6 +21,7 @@ namespace Assets.Scripts
     /// </summary>
     public class Creature : MonoBehaviour, IEnemy
     {
+        Guid uniqueID = new Guid();
         public AI AI { get; set; }
         public Attack Attack { get; set; }
         public Feeling Feeling { get; set; }
@@ -31,6 +34,14 @@ namespace Assets.Scripts
 
         private Creature Target { get; set; } = null;
         private Vector3? Location { get; set; } = null;
+
+        public BlueprintCreature SaveState()
+        {
+            return new BlueprintCreature(
+                transform.position.x,
+                transform.position.y,
+                transform.position.z);
+        }
 
         /// <summary>
         /// Assign and cause an action to the AI for it's target
@@ -113,7 +124,29 @@ namespace Assets.Scripts
             }
             else  // if none then 
             {
-               
+                Dictionary<Creature, float> inrangecreatures = new Dictionary<Creature, float>();
+                foreach (Creature creature in FindObjectsOfType(typeof(Creature)).Select(p => (p as Creature)).Where(p => p.Team.Status == TeamStatus.Enemy))
+                {
+                    var testcreature = TryGetInRangeCreature(creature);
+                    if (testcreature.HasValue) { inrangecreatures.Add(testcreature.Value.Key, testcreature.Value.Value); }
+                }
+                if (inrangecreatures.Count > 0)
+                {
+                    inrangecreatures.OrderBy(p => p.Value); // get closest
+                    Target = inrangecreatures.First().Key;
+                }
+            }
+        }
+
+        public KeyValuePair<Creature, float>? TryGetInRangeCreature(Creature creature)
+        {
+            var distance = Vector3.Distance(creature.gameObject.transform.position, transform.position);
+            if (distance < Attack.AttackRadius) {
+                return new KeyValuePair<Creature, float>(creature, distance);
+            }
+            else
+            {
+                return null;
             }
         }
 

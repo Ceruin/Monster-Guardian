@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static Assets.Scripts.ControlManager;
+using static ControlManager;
 
 namespace Assets.Scripts
 {

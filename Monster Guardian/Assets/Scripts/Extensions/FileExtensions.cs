@@ -5,7 +5,7 @@ namespace Assets.Scripts
 {
     public static class FileExtensions
     {
-        public static FileInfo GetAppFile(string file)
+        public static FileInfo GetAppFile(this string file)
         {
             var assemblyPath = Application.persistentDataPath;
             return new FileInfo(Path.Combine(assemblyPath, file));

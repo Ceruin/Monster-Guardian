@@ -6,7 +6,7 @@ namespace Assets.Scripts
     [Serializable]
     public class Team : MonoBehaviour
     {
-        private TeamStatus Status { get; set; }
+        public TeamStatus Status { get; private set; }
 
         private void Start()
         {

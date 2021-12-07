@@ -1,18 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using static Assets.Scripts.ControlManager;
+using UnityEngine.SceneManagement;
+using static ControlManager;
 
 namespace Assets.Scripts
 {
-    public class Player : MonoBehaviour, ISelectionActions
+    public class Player : MonoBehaviour, ISelectionActions, IRestoration
     {
-        [NonSerialized]
-        public List<GameObject> selectedUnits = new List<GameObject>();
+        public GameObject creatureprefab;
 
-        private GameObject[] allUnits;
+        public List<GameObject> selectedUnits = new List<GameObject>();
+        private GameObject[] allFriendlys;
 
         private Rect drawnRect;
 
@@ -33,10 +36,7 @@ namespace Assets.Scripts
         {
             get
             {
-                Ray ray = Camera.main.ScreenPointToRay(startScreenMousePOS);
-                RaycastHit hit;
-                Physics.Raycast(ray, out hit);
-                return hit.point;
+                return Camera.main.GetWorldPOS(startScreenMousePOS);
             }
         }
 
@@ -44,10 +44,7 @@ namespace Assets.Scripts
         {
             get
             {
-                Ray ray = Camera.main.ScreenPointToRay(screenMousePOS);
-                RaycastHit hit;
-                Physics.Raycast(ray, out hit);
-                return hit.point;
+                return Camera.main.GetWorldPOS(screenMousePOS);
             }
         }
 
@@ -63,6 +60,14 @@ namespace Assets.Scripts
         public void OnEndSelection(InputAction.CallbackContext context)
         {
             if (context.performed)
+            {
+                HandleSelectionCommand();
+            }
+        }
+
+        private void HandleSelectionCommand()
+        {
+            if (isClicking)
             {
                 isClicking = false;
                 MouseRelease();
@@ -89,9 +94,38 @@ namespace Assets.Scripts
         {
             if (context.performed)
             {
-                isClicking = true;
-                selectedUnits.Clear(); // Clear the list with selected unit
-                startScreenMousePOS = new Vector3(screenMousePOS.x, screenMousePOS.y, screenMousePOS.z);
+                if (!mousePosition.IsPointerOverUIObject()) // if not clicking UI
+                {
+                    isClicking = true;
+                    selectedUnits.Clear(); // Clear the list with selected unit
+                    startScreenMousePOS = new Vector3(screenMousePOS.x, screenMousePOS.y, screenMousePOS.z);
+                }
+            }
+        }
+
+        public void Save()
+        {
+            Creature[] allObjects = FindObjectsOfType<Creature>();
+            List<BlueprintCreature> allBlueprints = allObjects.Select(p => p.SaveState()).ToList();
+            FileConstants.SaveFile.SaveJson(allBlueprints.ToJson(true));
+        }
+
+        public void Load()
+        {
+            // Destory old creatures
+            Creature[] allCreatures = FindObjectsOfType<Creature>();
+            foreach (Creature gme in allCreatures)
+            {
+                Destroy(gme);
+            }
+
+            // Load from file
+            Creature[] savedCreatures = FileConstants.SaveFile.LoadJson<Creature[]>();
+
+            // Instantiate and load new creatures
+            foreach (Creature hobbit in savedCreatures)
+            {
+                Instantiate(hobbit);
             }
         }
 
@@ -123,7 +157,7 @@ namespace Assets.Scripts
 
         private void MouseRelease()
         {
-            foreach (GameObject unit in allUnits) // Select all units within the square if we have created a square
+            foreach (GameObject unit in allFriendlys) // Select all units within the square if we have created a square
             {
                 if (IsWinner(unit)) // Is this unit within the square
                 {
@@ -139,7 +173,6 @@ namespace Assets.Scripts
             playerControls.Selection.EndSelection.Disable();
             playerControls.Selection.MousePosition.Disable();
             playerControls.Selection.MoveSelection.Disable();
-            playerControls.Selection.TestSuper.Disable();
         }
 
         private void OnEnable()
@@ -149,7 +182,6 @@ namespace Assets.Scripts
             playerControls.Selection.EndSelection.Enable();
             playerControls.Selection.MousePosition.Enable();
             playerControls.Selection.MoveSelection.Enable();
-            playerControls.Selection.TestSuper.Enable();
         }
 
         // Display the selection with a GUI image
@@ -163,7 +195,7 @@ namespace Assets.Scripts
 
         private void Update()
         {
-            allUnits = GameObject.FindGameObjectsWithTag(TeamStatus.Friendly.ToString()); // done every update to include constructed enemies
+            allFriendlys = GameObject.FindGameObjectsWithTag(TeamStatus.Friendly.ToString()); // done every update to include constructed objects
         }
     }
 }
