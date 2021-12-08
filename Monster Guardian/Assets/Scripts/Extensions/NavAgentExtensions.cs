@@ -9,7 +9,7 @@ namespace Assets.Scripts
         {
             if (goal.HasValue)
             {
-                //agent.SetDestination(goal.Value);
+                agent.SetDestination(goal.Value);
                 var path = new NavMeshPath();
                 NavMesh.CalculatePath(agent.gameObject.transform.position, goal.Value, NavMesh.AllAreas, path);
                 agent.SetPath(path);

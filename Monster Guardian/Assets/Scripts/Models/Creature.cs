@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -21,26 +20,23 @@ namespace Assets.Scripts
     /// </summary>
     public class Creature : MonoBehaviour, IEnemy
     {
-        Guid uniqueID = new Guid();
+        public Material[] materials;
         public AI AI { get; set; }
         public Attack Attack { get; set; }
+        public Consumable Consumable { get; set; }
         public Feeling Feeling { get; set; }
         public Hunger Hunger { get; set; }
         public Life Life { get; set; }
         public Selection Selection { get; set; }
-        public Consumable Consumable { get; set; } 
         public Team Team { get; set; }
-        public Traits Traits { get; set; } 
+        public Traits Traits { get; set; }
 
-        private Creature Target { get; set; } = null;
         private Vector3? Location { get; set; } = null;
+        private Creature Target { get; set; } = null;
 
-        public BlueprintCreature SaveState()
+        public void AssignLocation(Vector3 location)
         {
-            return new BlueprintCreature(
-                transform.position.x,
-                transform.position.y,
-                transform.position.z);
+            Location = location;
         }
 
         /// <summary>
@@ -49,11 +45,6 @@ namespace Assets.Scripts
         public void AssignTarget(Creature target)
         {
             Target = target;
-        }
-
-        public void AssignLocation(Vector3 location)
-        {
-            Location = location;
         }
 
         public void AttackTarget(Creature enemy)
@@ -82,14 +73,45 @@ namespace Assets.Scripts
             // attempt an evolution
         }
 
+        public void LoadState(BlueprintCreature hobbit)
+        {
+            transform.position = new Vector3(hobbit.xpos, hobbit.ypos, hobbit.zpos);
+            tag = hobbit.tag;
+            Team.SetTeam();
+            SetColor();
+        }
+
         public void Play()
         {
             // play animation
         }
 
+        public BlueprintCreature SaveState()
+        {
+            return new BlueprintCreature(
+                transform.position.x,
+                transform.position.y,
+                transform.position.z,
+                tag
+                );
+        }
+
         public void Sleep()
         {
             // play sleep animation
+        }
+
+        public KeyValuePair<Creature, float>? TryGetInRangeCreature(Creature creature)
+        {
+            var distance = Vector3.Distance(creature.gameObject.transform.position, transform.position);
+            if (distance < Attack.AttackRadius)
+            {
+                return new KeyValuePair<Creature, float>(creature, distance);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         // Start is called before the first frame update
@@ -106,11 +128,26 @@ namespace Assets.Scripts
             Traits = gameObject.AddComponent<Traits>();
         }
 
-        // Update is called once per frame
-        private void Update()
+        private void Start()
         {
-            HandleMovement();
-            HandleAttack();
+            SetColor();
+        }
+
+        private void SetColor()
+        {
+            switch (Team.Status)
+            {
+                case TeamStatus.Friendly:
+                    GetComponent<MeshRenderer>().material = materials[0];
+                    break;
+
+                case TeamStatus.Enemy:
+                    GetComponent<MeshRenderer>().material = materials[1];
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         private void HandleAttack()
@@ -122,7 +159,7 @@ namespace Assets.Scripts
                     Target.GetComponent<Creature>().Life.TakeDamage(Attack.GetDamage()); // attempt to attack target
                 }
             }
-            else  // if none then 
+            else  // if none then
             {
                 Dictionary<Creature, float> inrangecreatures = new Dictionary<Creature, float>();
                 foreach (Creature creature in FindObjectsOfType(typeof(Creature)).Select(p => (p as Creature)).Where(p => p.Team.Status == TeamStatus.Enemy))
@@ -138,27 +175,15 @@ namespace Assets.Scripts
             }
         }
 
-        public KeyValuePair<Creature, float>? TryGetInRangeCreature(Creature creature)
-        {
-            var distance = Vector3.Distance(creature.gameObject.transform.position, transform.position);
-            if (distance < Attack.AttackRadius) {
-                return new KeyValuePair<Creature, float>(creature, distance);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         private void HandleMovement()
         {
-            if (Location.HasValue) // if location move to location            
+            if (Location.HasValue) // if location move to location
             {
-                if (AI.GetStatus() == UnityEngine.AI.NavMeshPathStatus.PathComplete) // todo: figure out logic of how to handle when the action ended 
+                AI.Move(Location);
+                if (AI.GetStatus() == UnityEngine.AI.NavMeshPathStatus.PathComplete) // todo: figure out logic of how to handle when the action ended
                 {
                     Location = null;
                 }
-                AI.Move(Location);
             }
             else if (Target != null) // if target move to target
             {
@@ -171,6 +196,13 @@ namespace Assets.Scripts
             {
                 AI.Idle();
             }
+        }
+
+        // Update is called once per frame
+        private void Update()
+        {
+            HandleMovement();
+            HandleAttack();
         }
     }
 }

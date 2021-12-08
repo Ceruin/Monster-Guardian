@@ -11,7 +11,7 @@ namespace Assets.Scripts
             return new FileInfo(Path.Combine(assemblyPath, file));
         }
 
-        public static T LoadJson<T>(this string file)
+        public static T[] LoadJson<T>(this string file)
         {
             return File.ReadAllText(file).FromJson<T>();
         }

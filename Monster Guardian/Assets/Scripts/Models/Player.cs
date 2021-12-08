@@ -2,10 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using static ControlManager;
 
 namespace Assets.Scripts
@@ -50,6 +47,27 @@ namespace Assets.Scripts
 
         private bool isClicking { get; set; } = false;
 
+        public void Load()
+        {
+            // Destory old creatures
+            Creature[] allCreatures = FindObjectsOfType<Creature>();
+            foreach (Creature gme in allCreatures)
+            {
+                Destroy(gme.gameObject);
+            }
+            selectedUnits.Clear(); // clear old selection
+
+            // Load from file
+            BlueprintCreature[] savedCreatures = FileConstants.SaveFile.LoadJson<BlueprintCreature>();
+
+            // Instantiate and load new creatures
+            foreach (BlueprintCreature hobbit in savedCreatures)
+            {
+                var gameobj = Instantiate(creatureprefab);
+                gameobj.GetComponent<Creature>().LoadState(hobbit);
+            }
+        }
+
         public void OnContinueSelection(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -62,15 +80,6 @@ namespace Assets.Scripts
             if (context.performed)
             {
                 HandleSelectionCommand();
-            }
-        }
-
-        private void HandleSelectionCommand()
-        {
-            if (isClicking)
-            {
-                isClicking = false;
-                MouseRelease();
             }
         }
 
@@ -103,32 +112,6 @@ namespace Assets.Scripts
             }
         }
 
-        public void Save()
-        {
-            Creature[] allObjects = FindObjectsOfType<Creature>();
-            List<BlueprintCreature> allBlueprints = allObjects.Select(p => p.SaveState()).ToList();
-            FileConstants.SaveFile.SaveJson(allBlueprints.ToJson(true));
-        }
-
-        public void Load()
-        {
-            // Destory old creatures
-            Creature[] allCreatures = FindObjectsOfType<Creature>();
-            foreach (Creature gme in allCreatures)
-            {
-                Destroy(gme);
-            }
-
-            // Load from file
-            Creature[] savedCreatures = FileConstants.SaveFile.LoadJson<Creature[]>();
-
-            // Instantiate and load new creatures
-            foreach (Creature hobbit in savedCreatures)
-            {
-                Instantiate(hobbit);
-            }
-        }
-
         [Obsolete]
         public void OnTestSuper(InputAction.CallbackContext context)
         {
@@ -137,12 +120,28 @@ namespace Assets.Scripts
             }
         }
 
+        public void Save()
+        {
+            Creature[] allObjects = FindObjectsOfType<Creature>();
+            List<BlueprintCreature> allBlueprints = allObjects.Select(p => p.SaveState()).ToList();
+
+            FileConstants.SaveFile.SaveJson(allBlueprints.ToJson(true));
+        }
+
         private void Awake()
         {
             playerControls = new ControlManager();
             playerControls.Selection.SetCallbacks(this);
         }
 
+        private void HandleSelectionCommand()
+        {
+            if (isClicking)
+            {
+                isClicking = false;
+                MouseRelease();
+            }
+        }
         /// <summary>
         /// Checks to see if the object is inside of our drawn rect
         /// This will be based on the objects PIVOT POINT

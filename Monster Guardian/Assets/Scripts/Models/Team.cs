@@ -8,7 +8,12 @@ namespace Assets.Scripts
     {
         public TeamStatus Status { get; private set; }
 
-        private void Start()
+        private void Awake()
+        {
+            SetTeam();
+        }
+
+        public void SetTeam()
         {
             TeamStatus _status;
             Enum.TryParse(tag, out _status);
