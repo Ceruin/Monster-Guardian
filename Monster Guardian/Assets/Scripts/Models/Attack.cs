@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// This is an attack component class to give attack stats and functions
+    /// </summary>
     [Serializable]
     public class Attack : MonoBehaviour
     {

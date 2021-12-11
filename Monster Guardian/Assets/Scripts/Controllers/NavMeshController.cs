@@ -4,10 +4,17 @@ using UnityEngine.AI;
 namespace Assets.Scripts
 {
     /// <summary>
-    /// The navmesh class is a singleton static, this means we cannot creat extensions or partial methods so those are all to live as statics in this class
+    /// This is a set of navmesh exclusive methods since the navmesh itself is a singleton instance in unity it cannot be an extension so it is under a controller.
     /// </summary>
     public static class NavMeshController
     {
+        /// <summary>
+        /// Gets a randomized point on the nav mesh
+        /// </summary>
+        /// <param name="center"></param>
+        /// <param name="range"></param>
+        /// <param name="hitAttempts"></param>
+        /// <returns></returns>
         public static Vector3 RandomPoint(Vector3 center, float range, int hitAttempts = 30)
         {
             for (int i = 0; i < hitAttempts; i++) // retry if failed

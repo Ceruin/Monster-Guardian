@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// This is a component to allow a game object to feel hunger and provides hunger related status/stats
+    /// </summary>
     [Serializable]
     public class Hunger : MonoBehaviour
     {
@@ -17,6 +20,7 @@ namespace Assets.Scripts
                 return Get();
             }
         }
+
         /// <summary>
         /// Consume an object marked under the consumable tag
         /// </summary>
@@ -63,6 +67,7 @@ namespace Assets.Scripts
         {
             return HungerStatus.Full;
         }
+
         /// <summary>
         /// Using the hunger loss interval check if we should deduct hunger
         /// </summary>

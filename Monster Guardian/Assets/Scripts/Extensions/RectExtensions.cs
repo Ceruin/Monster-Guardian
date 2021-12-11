@@ -2,8 +2,17 @@
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// Rectangle interface extension methods.
+    /// </summary>
     public static class RectExtensions
     {
+        /// <summary>
+        /// Draws a border for the rectangle
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="thickness"></param>
+        /// <param name="color"></param>
         public static void DrawBorder(this Rect rect, float thickness, Color color)
         {
             new Rect(rect.xMin, rect.yMin, rect.width, thickness).DrawScreen(color); // Top
@@ -14,6 +23,7 @@ namespace Assets.Scripts
 
         /// <summary>
         /// todo: convert this to any color
+        /// Draws the rectangle on the GUI
         /// </summary>
         /// <param name="rect"></param>
         /// <param name="color"></param>

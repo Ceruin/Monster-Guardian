@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// This is a component that helps a game object to determine its team in relation to the player
+    /// </summary>
     [Serializable]
     public class Team : MonoBehaviour
     {
@@ -13,6 +16,9 @@ namespace Assets.Scripts
             SetTeam();
         }
 
+        /// <summary>
+        /// Set the team status
+        /// </summary>
         public void SetTeam()
         {
             TeamStatus _status;

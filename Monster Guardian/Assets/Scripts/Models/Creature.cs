@@ -4,18 +4,20 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    // todo:
-    // left click to attack
-    // incubator
-    // random ore
-    // health bars
-    // allies/enemies radius
-    // main char movement
-
-    // class objexts know what happen to them and return the values
-    // components return values that the main class inteprets
+    /*
+     * todo:
+     * left click to attack
+     * incubator
+     * random ore
+     * health bars
+     * allies/enemies radius
+     * main char movement
+     * class objexts know what happen to them and return the values
+     * components return values that the main class inteprets
+    */
 
     /// <summary>
+    /// This is the base class for most of the game objects to define what a creature is and what components it will use at a base level that can then be inherited and interfaced.
     /// https://chao-island.com/wiki/Actions
     /// </summary>
     public class Creature : MonoBehaviour, IEnemy
@@ -47,12 +49,20 @@ namespace Assets.Scripts
             Target = target;
         }
 
+        /// <summary>
+        /// Assign a target for the AI to attack
+        /// </summary>
+        /// <param name="enemy"></param>
         public void AttackTarget(Creature enemy)
         {
             // choose target
             AssignTarget(enemy);
         }
 
+        /// <summary>
+        /// Breed with an ally creature
+        /// </summary>
+        /// <param name="ally"></param>
         public void Breed(Creature ally)
         {
             // choose target
@@ -60,6 +70,10 @@ namespace Assets.Scripts
             // attempt to breed
         }
 
+        /// <summary>
+        /// Eat the enemy type
+        /// </summary>
+        /// <param name="enemy"></param>
         public void Eat(Creature enemy)
         {
             // choose target
@@ -67,12 +81,19 @@ namespace Assets.Scripts
             // attempt to eat
         }
 
+        /// <summary>
+        /// Evolve the creature and upgrade its stats
+        /// </summary>
         public void Evolve()
         {
             // if level reaches amount
             // attempt an evolution
         }
 
+        /// <summary>
+        /// Load the JSON state of the creature
+        /// </summary>
+        /// <param name="hobbit"></param>
         public void LoadState(BlueprintCreature hobbit)
         {
             transform.position = new Vector3(hobbit.xpos, hobbit.ypos, hobbit.zpos);
@@ -81,11 +102,18 @@ namespace Assets.Scripts
             SetColor();
         }
 
+        /// <summary>
+        /// Play with toys and reduce stress of creature
+        /// </summary>
         public void Play()
         {
             // play animation
         }
 
+        /// <summary>
+        /// Save the current state of the creature to a JSON blueprint
+        /// </summary>
+        /// <returns></returns>
         public BlueprintCreature SaveState()
         {
             return new BlueprintCreature(
@@ -96,11 +124,19 @@ namespace Assets.Scripts
                 );
         }
 
+        /// <summary>
+        /// Make the creature sleep and rest
+        /// </summary>
         public void Sleep()
         {
             // play sleep animation
         }
 
+        /// <summary>
+        /// Try to get creatures in range along with their distance values
+        /// </summary>
+        /// <param name="creature"></param>
+        /// <returns></returns>
         public KeyValuePair<Creature, float>? TryGetInRangeCreature(Creature creature)
         {
             var distance = Vector3.Distance(creature.gameObject.transform.position, transform.position);
@@ -133,6 +169,9 @@ namespace Assets.Scripts
             SetColor();
         }
 
+        /// <summary>
+        /// Set the creatures internal color
+        /// </summary>
         private void SetColor()
         {
             switch (Team.Status)
@@ -150,6 +189,9 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Handle the attack actions for the creature
+        /// </summary>
         private void HandleAttack()
         {
             if (Target != null) // if target move to target
@@ -175,6 +217,9 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Handle the movement actions
+        /// </summary>
         private void HandleMovement()
         {
             if (Location.HasValue) // if location move to location

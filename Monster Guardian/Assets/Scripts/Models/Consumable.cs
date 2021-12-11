@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-
     /// <summary>
-    /// Represents a consumable object, these values are fed into various systems
+    /// This is a consumable component class that marks a game object as consumable
+    /// these values are fed into various systems
     /// </summary>
     [Serializable]
     public class Consumable : MonoBehaviour

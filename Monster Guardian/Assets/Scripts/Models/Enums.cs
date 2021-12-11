@@ -1,5 +1,7 @@
 ﻿namespace Assets.Scripts
 {
+    // This is a collection of enumerations used across the system
+
     public enum FeelStatus
     {
         Sad,

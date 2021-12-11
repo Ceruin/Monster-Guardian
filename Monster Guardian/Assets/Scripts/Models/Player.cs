@@ -7,6 +7,9 @@ using static ControlManager;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// This is the “Player” class which maps the players controls to player actions.
+    /// </summary>
     public class Player : MonoBehaviour, ISelectionActions, IRestoration
     {
         public GameObject creatureprefab;
@@ -47,6 +50,9 @@ namespace Assets.Scripts
 
         private bool isClicking { get; set; } = false;
 
+        /// <summary>
+        /// Load the games state from the JSON file
+        /// </summary>
         public void Load()
         {
             // Destory old creatures
@@ -68,6 +74,10 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Actions performed while selection is active
+        /// </summary>
+        /// <param name="context"></param>
         public void OnContinueSelection(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -75,6 +85,10 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Actions performed when slection has ended
+        /// </summary>
+        /// <param name="context"></param>
         public void OnEndSelection(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -83,11 +97,19 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Actions performed as mouse moves
+        /// </summary>
+        /// <param name="context"></param>
         public void OnMousePosition(InputAction.CallbackContext context)
         {
             mousePosition = context.ReadValue<Vector2>();
         }
 
+        /// <summary>
+        /// Actions performed when selection is moved
+        /// </summary>
+        /// <param name="context"></param>
         public void OnMoveSelection(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -99,6 +121,10 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Actions performed on selection start
+        /// </summary>
+        /// <param name="context"></param>
         public void OnStartSelection(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -120,6 +146,9 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Save the current scene gameobjects to a JSON string
+        /// </summary>
         public void Save()
         {
             Creature[] allObjects = FindObjectsOfType<Creature>();
@@ -134,6 +163,9 @@ namespace Assets.Scripts
             playerControls.Selection.SetCallbacks(this);
         }
 
+        /// <summary>
+        /// Handle the selection actions
+        /// </summary>
         private void HandleSelectionCommand()
         {
             if (isClicking)
@@ -142,6 +174,7 @@ namespace Assets.Scripts
                 MouseRelease();
             }
         }
+
         /// <summary>
         /// Checks to see if the object is inside of our drawn rect
         /// This will be based on the objects PIVOT POINT
@@ -154,6 +187,9 @@ namespace Assets.Scripts
             return drawnRect.Contains(space);
         }
 
+        /// <summary>
+        /// When mouse is released run actions
+        /// </summary>
         private void MouseRelease()
         {
             foreach (GameObject unit in allFriendlys) // Select all units within the square if we have created a square

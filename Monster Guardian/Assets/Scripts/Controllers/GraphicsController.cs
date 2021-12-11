@@ -2,8 +2,18 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// This contains methods for using the System.Drawing to create various graphics such as the square selection box.
+    /// </summary>
     public static class GraphicsController
     {
+        /// <summary>
+        /// Draws a rectangle on the current screen using two vector points
+        /// Colors the screen rectangle in
+        /// </summary>
+        /// <param name="screenPosition1"></param>
+        /// <param name="screenPosition2"></param>
+        /// <returns></returns>
         public static Rect DrawRectangle(Vector3 screenPosition1, Vector3 screenPosition2)
         {
             Rect drawnRect = GetScreenRect(screenPosition1, screenPosition2);
@@ -12,6 +22,12 @@ namespace Assets.Scripts
             return drawnRect;
         }
 
+        /// <summary>
+        /// Gets a rectangle object from two vector points
+        /// </summary>
+        /// <param name="screenPosition1"></param>
+        /// <param name="screenPosition2"></param>
+        /// <returns></returns>
         public static Rect GetScreenRect(Vector3 screenPosition1, Vector3 screenPosition2)
         {
             // Move origin from bottom left to top left
@@ -24,6 +40,10 @@ namespace Assets.Scripts
             return Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
         }
 
+        /// <summary>
+        /// Creates a white texture
+        /// </summary>
+        /// <returns></returns>
         public static Texture2D WhiteTexture()
         {
             Texture2D texture;

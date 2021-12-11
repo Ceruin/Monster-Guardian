@@ -2,6 +2,9 @@
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// This is a JSON conversion class for the Creature class to store it’s serializable data into a JSON file.
+    /// </summary>
     [Serializable]
     public class BlueprintCreature
     {
@@ -9,6 +12,7 @@ namespace Assets.Scripts
         public float xpos;
         public float ypos;
         public float zpos;
+
         public BlueprintCreature()
         { }
 

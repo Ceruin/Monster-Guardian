@@ -2,9 +2,8 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-
     /// <summary>
-    /// Forces the object to always face the camera
+    /// This is a component that will force the game object to look at the main.Camera
     /// </summary>
     public class FaceCamera : MonoBehaviour
     {

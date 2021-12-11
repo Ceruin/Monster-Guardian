@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// This is a component to create traits specific to that game objects creature representation
+    /// </summary>
     [Serializable]
     public class Traits : MonoBehaviour
     {
@@ -11,6 +14,9 @@ namespace Assets.Scripts
         public int EvoLevel;
         public int PowerLevel;
 
+        /// <summary>
+        /// Generate basic and randomized traits
+        /// </summary>
         public void Generate()
         {
             // generate basic traits

@@ -4,12 +4,19 @@ using static ControlManager;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// This is the player camera class which maps the player controls to camera actions and sets up some camera basic properties.
+    /// </summary>
     public class PlayerCamera : MonoBehaviour, ICameraMovementActions
     {
         public int moveSpeed = 5; // default
         private Vector2 move = Vector2.zero;
         private ControlManager playerControls;
 
+        /// <summary>
+        /// When a movement key WASD is hit fire commands
+        /// </summary>
+        /// <param name="context"></param>
         public void OnMovement(InputAction.CallbackContext context)
         {
             if (context.performed)
